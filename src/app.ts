@@ -54,26 +54,24 @@ app.post('/api/posts', async (req: Request, res: Response) => {
             content: content
         }
     })
-    console.log('게시글 작성 완료!')
+    console.log('게시글 작성완료!')
     res.json(post)
 })
 
 // 게시글 수정하기
-// app.patch('/api/posts/:postId', async (req: Request, res: Response) => {
-//     const { title, content } = req.body
-//     console.log(req.body)
-//     const id = req.params.postId
-//     const updatedPost = await prisma.post.update({
-//         where: {
-//             id: Number(id)
-//         },
-//         data: {
-//             title: title,
-//             content: content
-//         }
-//     })
-//     res.json(updatedPost)
-// })
+app.patch('/api/posts/:postId', async (req: Request, res: Response) => {
+    const { title, content } = req.body
+    const id = req.params.postId
+    const updatedPost = await prisma.post.update({
+        where: { postId: Number(id) },
+        data: {
+            title: title,
+            content: content
+        }
+    })
+    console.log('수정완료!')
+    res.json(updatedPost)
+})
 
 // 게시글 삭제하기
 app.delete('/api/posts/:postId', async (req: Request, res: Response) => {
