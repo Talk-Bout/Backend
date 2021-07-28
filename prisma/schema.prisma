@@ -15,6 +15,7 @@ model User {
   email         String      @unique
   password      String
   profilePic    String? 
+  role          String      
   comment       Comment[]
   post          Post[]
   bookmark      Bookmark[]
@@ -58,9 +59,3 @@ model Bookmark{
   post          Post        @relation(fields:[postId], references:[postId])
   postId        Int       
 }
-
-
-
-
-
-
