@@ -302,3 +302,6 @@ pip-selfcheck.json
 
 # conifg js
 *.config.json
+
+node_modules
+.env
