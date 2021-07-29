@@ -26,6 +26,7 @@ model Post {
   postId        Int         @id @default(autoincrement())
   createdAt     DateTime    @default(now())
   content       String    
+  title         String
   user          User        @relation(fields:[nickname],references:[nickname])
   nickname      String      
   category      String   
