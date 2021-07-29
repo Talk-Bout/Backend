@@ -5,7 +5,6 @@ dotenv.config()
 
 
 import { PrismaClient } from '@prisma/client'
-import { nextTick } from 'process'
 const prisma = new PrismaClient()
 
 const app = express()
