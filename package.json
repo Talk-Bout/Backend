@@ -4,7 +4,7 @@
   "description": "Final project at Hanghae99",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/app.js",
+    "start": "nodemon dist/app.js",
     "dev": "nodemon src/app.ts",
     "build": "tsc -p .",
     "test": "jest -i"
