@@ -397,5 +397,4 @@ pip-selfcheck.json
 
 # prisma
 
-prisma/migrations
-
+.prisma/migrations
