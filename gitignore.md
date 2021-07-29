@@ -394,3 +394,7 @@ pip-selfcheck.json
 # conifg js
 
 \*.config.json
+
+# prisma
+
+.prisma/migrations
