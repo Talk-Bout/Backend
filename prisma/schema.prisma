@@ -27,6 +27,7 @@ model Post {
   createdAt     DateTime    @default(now())
   title         String
   content       String    
+  title         String
   user          User        @relation(fields:[nickname],references:[nickname])
   nickname      String      
   category      String   
