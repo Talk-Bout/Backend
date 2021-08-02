@@ -10,7 +10,7 @@ export default class createPostValidator {
   @IsNotEmpty()
   content: string 
 
- @IsInt()
- @IsNotEmpty()
+  @IsInt()
+  @IsNotEmpty()
   postId: number  
 }

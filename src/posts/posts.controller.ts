@@ -1,15 +1,23 @@
 import express, { NextFunction, Request, Response } from 'express'
 import Controller from '../interfaces/controller.interface'
-import postCreate from './features/post.create'
-import checkPost from './features/post.read'
+import Post from '../interfaces/post.interface'
+import updatedPost from '../interfaces/updatedpost.interface'
+import like from '../interfaces/like'
 import validationMiddleware from '../middlewares/validation.middleware'
 import createPostValidator from '../validators/createPost.validator'
 import createUpdatedPostValidator from '../validators/updatedPost.validator copy'
+import PromiseRejectionException from '../exceptions/PromiseRejection.exception'
+import postCreate from './features/post.create'
+import checkPost from './features/post.read'
 import updatePost from './features/post.update'
 import deletePost from './features/post.delete'
 import getPostDetail from './features/post.detail'
-import PromiseRejectionException from '../exceptions/PromiseRejection.exception'
-import Post from '../interfaces/post.interface'
+import getMyPostDetail from './features/mypost.detail'
+import likePost from './features/like'
+import unlikePost from './features/unlike'
+
+
+
 
 export default class PostsController implements Controller {
   public readonly path = '/posts'
@@ -23,16 +31,15 @@ export default class PostsController implements Controller {
       .route(this.path)
       .post(validationMiddleware(createPostValidator),this.createPost)
       .get(this.getPost)
-    //this.router.get(this.path, this.getPost)
-    // this.router.get(`{this.path}/:postId`, this.getPostDetail)
-
+      .get(this.getMyPost)
+ 
     this.router 
       .route(`${this.path}/:postId`)
       .patch(validationMiddleware(createUpdatedPostValidator),this.updatePost)
       .delete(this.deletePost)
       .get(this.getPostDetail)
-    // this.router.patch(`${this.path}/:postId`, this.updatePost)
-    // this.router.route(`${this.path}/:postId`, this.deletePost) 
+      .post(this.likPost)
+  
   }
 
   private async createPost(req: Request, res: Response, next: NextFunction) {
@@ -65,8 +72,8 @@ export default class PostsController implements Controller {
 
 
     private async updatePost(req: Request, res: Response, next: NextFunction) {
-    const updateDTO = {
-      postId : req.body.postId,
+    const updateDTO: updatedPost = {
+      postId : parseInt(req.body.postId),
       content: req.body.content
     } 
     const updatedPost = await updatePost(updateDTO)
@@ -84,5 +91,35 @@ export default class PostsController implements Controller {
    
   }
 
+  private async getMyPost(req: Request, res: Response, next: NextFunction) {
+    const writerDTO = req.body.nickname
+    
+    const posts = await getMyPostDetail(writerDTO)
+    .catch(()=>next (new PromiseRejectionException()))
+    return res.status(200).json(posts)
+   
+  }
+
+
+  private async likPost(req: Request, res: Response, next: NextFunction) {
+    
+    const like = req.body.like
+
+    const likeDTO: like = {
+      nickname: req.body.nickname,
+      postId: parseInt(req.body.postId)
+    }
+
+    if(like === true){
+    const like = await likePost(likeDTO)
+    .catch(()=>next (new PromiseRejectionException()))
+    return res.status(200).json({like:true})
+    }else if(like == false){
+      const unlike = await unlikePost(likeDTO)
+      .catch(()=>next (new PromiseRejectionException()))
+      return res.status(200).json({like:false})
+    }
+
+  }
 
 }
