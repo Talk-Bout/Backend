@@ -1,4 +1,4 @@
 import App from './app'
 import UsersController from './users/users.controller'
-
-new App([new UsersController()])
+import PostsController from './posts/posts.controller'
+new App([new UsersController(),new PostsController()])
