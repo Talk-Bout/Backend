@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express'
 import Controller from '../interfaces/controller.interface'
+import commentRead from './features/comment.read'
 import commentCreate from './features/comment.create'
 import commentUpdate from './features/comment.update'
 import commentDelete from './features/comment.delete'
@@ -11,57 +12,77 @@ import CommentDeletionException from '../exceptions/CommentDeletion.exception'
 import CommentUpdateException from '../exceptions/CommentUpdate.exception'
 
 export default class CommentsController implements Controller {
-    public readonly path = '/posts/:postId/comments'
-    public readonly router = express.Router()
+  public readonly path = '/posts/:postId/comments'
+  public readonly router = express.Router()
 
-    constructor() {
-        this.initializeRoutes()
+  constructor() {
+    this.initializeRoutes()
+  }
+
+  private initializeRoutes() {
+    this.router
+      .post(
+        this.path,
+        validationMiddleware(createCommentValidator),
+        this.createComment
+      )
+      .read(this.path, this.readComment) //
+      .patch(this.path + '/commentId', this.updateComment)
+      .delete(this.path + '/commentId', this.deleteComment)
+  }
+
+  private async readComment(req: Request, res: Response, next: NextFunction) {
+    const postList = await commentRead(commentDTO).catch(() =>
+      next(new PromiseRejectionException())
+    )
+
+    return res.status(200).json(postList)
+  }
+
+  private async createComment(req: Request, res: Response, next: NextFunction) {
+    const { postId, nickname, content } = req.body
+
+    if (!nickname || !content || !postId) {
+      next(new CommentValidationException())
     }
 
-    private initializeRoutes() {
-        this.router.post(this.path, validationMiddleware(createCommentValidator), this.createComment)
-        this.router.patch(this.path + '/commentId', this.updateComment)
-        this.router.delete(this.path + '/commentId', this.deleteComment)
+    const commentDTO = req.body
+    const newComment = await commentCreate(commentDTO).catch(() =>
+      next(new PromiseRejectionException())
+    )
+
+    return res.status(201).json(newComment)
+  }
+
+  private async updateComment(req: Request, res: Response, next: NextFunction) {
+    const { commentId, title, content } = req.body
+
+    if (!commentId || !title || !content) {
+      next(new CommentUpdateException())
+    } else if (!title || !content) {
+      next(new CommentValidationException())
     }
 
-    private async createComment(req: Request, res: Response, next: NextFunction) {
-        const { postId, nickname, content } = req.body
+    const commentDTO = req.body
+    const modifiedComment = await commentUpdate(commentDTO).catch(() =>
+      next(new PromiseRejectionException())
+    )
 
-        if (!nickname || !content || !postId) {
-            next(new CommentValidationException())
-        }
+    return res.status(200).json(modifiedComment)
+  }
 
-        const commentDTO = req.body
-        const newComment = await commentCreate(commentDTO).catch(() => next(new PromiseRejectionException()))
+  private async deleteComment(req: Request, res: Response, next: NextFunction) {
+    const { commentId } = req.body
 
-        return res.status(201).json(newComment)
+    if (!commentId) {
+      next(new CommentDeletionException())
     }
 
-    private async updateComment(req: Request, res: Response, next: NextFunction) {
-        const { commentId, title, content } = req.body
+    const commentDTO = req.body
+    const deletedComment = await commentDelete(commentDTO).catch(() =>
+      next(new PromiseRejectionException())
+    )
 
-        if (!commentId || !title || !content) {
-            next(new CommentUpdateException())
-        } else if (!title || !content) {
-            next(new CommentValidationException())
-        }
-
-        const commentDTO = req.body
-        const modifiedComment = await commentUpdate(commentDTO).catch(() => next(new PromiseRejectionException()))
-
-        return res.status(200).json(modifiedComment)
-    }
-
-    private async deleteComment(req: Request, res: Response, next: NextFunction) {
-        const { commentId } = req.body
-
-        if (!commentId) {
-            next(new CommentDeletionException())
-        }
-
-        const commentDTO = req.body
-        const deleteComment = await commentDelete(commentDTO).catch(() => next(new PromiseRejectionException()))
-
-        return res.status(200).json(deleteComment)
-    }
+    return res.status(200).json(deletedComment)
+  }
 }
