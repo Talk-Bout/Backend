@@ -1,9 +1,12 @@
-// import Post from '../../interfaces/post.interface'
-// import { PrismaClient } from '@prisma/client'
 
-// export default async (DTO: Post) => {
-//   const Post = new PrismaClient().post
-//   return await Post.findUnique({
-//     where: DTO
-//   })
-// }
+import { PrismaClient } from '@prisma/client'
+
+export default async (DTO: string) => {
+  const Post = new PrismaClient().post
+
+  return await Post.findMany({
+    where:{ 
+        category: DTO 
+    }, 
+  })
+}
