@@ -1,33 +1,20 @@
 import {
-    Length,
-    IsEmail,
     IsString,
-    IsAlphanumeric,
     IsNotEmpty,
-    Matches
+    IsNumber,
 } from 'class-validator'
 
 export default class createCommentValidator {
-    // @Length(4, 10)
-    // @IsString()
-    // @IsAlphanumeric()
-    // @IsNotEmpty()
-    // nickname: string
 
-    // @Length(8, 16)
-    // @IsString()
-    // @IsNotEmpty()
-    // @Matches(RegExp(/^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,16}$/))
-    // password: string
+    @IsNumber()
+    @IsNotEmpty()
+    postId: number // string or number 이거를 못하고 있대
 
-    // @Length(8, 16)
-    // @IsString()
-    // @IsNotEmpty()
-    // @Matches(RegExp(/^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,16}$/))
-    // confirmPassword: string
+    @IsString()
+    @IsNotEmpty()
+    title: string
 
-    // @IsEmail()
-    // @IsString()
-    // @IsNotEmpty()
-    // email: string
+    @IsString()
+    @IsNotEmpty()
+    content: string
 }

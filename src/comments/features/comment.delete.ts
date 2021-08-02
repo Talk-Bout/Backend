@@ -1,22 +1,11 @@
-import { Request, Response, NextFunction } from 'express'
 import { PrismaClient } from '.prisma/client'
-import CommentDeletionException from '../../exceptions/CommentDeletionException'
+import Comment from '../../interfaces/comment.interface'
 
-export default async function (req: Request, res: Response, next: NextFunction) {
-    const { commentId } = req.body
+export default async function (DTO: Comment) {
     const Comment = new PrismaClient().comment
-
-    if (commentId == undefined) {
-        next(new CommentDeletionException())
-    }
-
-    const commentDTO = {
-        commentId: parseInt(commentId)
-    }
-
     const deleteComment = await Comment.delete({
-        where: commentDTO
-    }).catch(() => next(new CommentDeletionException()))
+        where: { Comment.postId } // object를 넣어야 할텐데..?
+    })
 
-    return res.status(200).json(deleteComment)
+    return deleteComment
 }
