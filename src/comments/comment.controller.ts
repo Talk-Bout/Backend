@@ -12,7 +12,9 @@ import CommentDeletionException from '../exceptions/CommentDeletion.exception'
 import CommentUpdateException from '../exceptions/CommentUpdate.exception'
 
 export default class CommentsController implements Controller {
-  public readonly path = '/posts/:postId/comments'
+  public readonly getPath = '/posts/:postId'
+  public readonly postPath = '/posts'
+  public readonly path = '/posts/:postId/comments/commentId'
   public readonly router = express.Router()
 
   constructor() {
@@ -21,18 +23,18 @@ export default class CommentsController implements Controller {
 
   private initializeRoutes() {
     this.router
-      .post(
-        this.path,
-        validationMiddleware(createCommentValidator),
-        this.createComment
-      )
-      .read(this.path, this.readComment) //
-      .patch(this.path + '/commentId', this.updateComment)
-      .delete(this.path + '/commentId', this.deleteComment)
+      .route(this.path)
+      .patch(this.updateComment)
+      .delete(this.deleteComment)
+    this.router.route(this.getPath).get(this.readComment)
+    this.router
+      .route(this.postPath)
+      .post(validationMiddleware(createCommentValidator), this.createComment)
   }
 
   private async readComment(req: Request, res: Response, next: NextFunction) {
-    const postList = await commentRead(commentDTO).catch(() =>
+    const DTO = req.body.postId
+    const postList = await commentRead(DTO).catch(() =>
       next(new PromiseRejectionException())
     )
 
