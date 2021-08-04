@@ -1,9 +1,7 @@
 import { PrismaClient } from '@prisma/client'
+import createValidator from '../validators/createComment.validator'
 
-export default async function (DTO: any) {
+export default (DTO: createValidator) => {
   const Comment = new PrismaClient().comment
-  const createComment = await Comment.create({
-    data: DTO
-  })
-  return createComment
+  return Comment.create({ data : DTO })
 }
