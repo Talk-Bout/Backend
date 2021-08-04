@@ -93,11 +93,11 @@ export default class CommentsController implements Controller {
   }
 
   private deleteComment(req: Request, res: Response, next: NextFunction) {
-    // const { commentId } = req.body
-    // if (!commentId) {
-    //   next(new ValidationFailureException())
-    // }
-    const DTO : deleteCommentValidator= {commentId: req.body.commentID} 
+   
+
+    const DTO : deleteCommentValidator= {commentId: parseInt(req.body.commentId)} 
+    console.log(DTO)
+    console.log("check chek ")
     return  Delete(DTO)
     .then(()=> res.status(200).json({ deleted: true }))
     .catch((err) => {
