@@ -40,6 +40,6 @@ export default class App {
   }
 
   private listen(port: number) {
-    this.app.listen(port, () => log(port))
+    this.app.listen(this.port, () => log(this.port))
   }
 }

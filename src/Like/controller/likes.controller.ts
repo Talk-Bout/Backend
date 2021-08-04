@@ -9,7 +9,7 @@ import Create from '../services/like.create'
 import Delete from '../services/like.delete'
 
 export default class BookmarksController implements Controller {
-    public readonly path = '/users/:nickname/bookmark'
+    public readonly path = '/posts/:postId/like'
     public readonly router = Router()
   
     constructor() {
