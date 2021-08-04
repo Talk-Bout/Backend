@@ -1,10 +1,6 @@
 import { PrismaClient } from '.prisma/client'
-
-export default async function (DTO: number) {
+import readValidator from '../validators/readComment.validator'
+export default  (DTO : readValidator ) => {
   const Comment = new PrismaClient().comment
-  const readComment = await Comment.findMany({
-    where: { postId: DTO }
-  })
-
-  return readComment
+  return  Comment.findMany({ where:  DTO })
 }
