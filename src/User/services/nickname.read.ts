@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../../Infrastructures/utils/prisma'
 import readNicknameValidator from '../validators/readNickname.validator'
 
 export default (DTO: readNicknameValidator) => {
-  const User = new PrismaClient().user
+  const User = prisma.user
   return User.findUnique({ where: DTO })
 }

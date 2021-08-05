@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../../Infrastructures/utils/prisma'
 import readPostValidator from '../validators/readPost.validator'
 
 export default (DTO: readPostValidator) => {
-  const Post = new PrismaClient().post
-  return Post.findMany({ where: DTO })
+  const Post = prisma.post
+  return DTO.category ? Post.findMany({ where: DTO }) : Post.findMany({})
 }

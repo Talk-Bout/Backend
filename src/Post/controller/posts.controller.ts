@@ -25,14 +25,14 @@ export default class PostsController implements Controller {
   private initializeRoutes() {
     this.router
       .route(this.path)
-      .get(validate(readValidator), this.readPost)
-      .post(authenticate, validate(createValidator), this.createPost)
+      .get(this.readPost)
+      .post( validate(createValidator), this.createPost)
 
     this.router
       .route(this.path + '/:postId')
       .get(validate(detailValidator), this.readDetail)
-      .patch(authenticate, validate(updateValidator), this.updatePost)
-      .delete(authenticate, validate(deleteValidator), this.deletePost)
+      .patch( validate(updateValidator), this.updatePost)
+      .delete(this.deletePost)
   }
 
   private createPost(req: Request, res: Response, next: NextFunction) {
@@ -44,7 +44,7 @@ export default class PostsController implements Controller {
     }
 
     return Create(createDTO)
-      .then((post) => post && res.status(201).json({ isCreated: true }))
+      .then(() => res.status(201).json({ isCreated: true }))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())
@@ -53,7 +53,7 @@ export default class PostsController implements Controller {
 
   private readPost(req: Request, res: Response, next: NextFunction) {
     const readDTO: readValidator = { 
-      category: req.body.category
+      category: req.body.category || undefined
     }
 
     return Read(readDTO)
@@ -65,7 +65,7 @@ export default class PostsController implements Controller {
   }
 
   private readDetail(req: Request, res: Response, next: NextFunction) {
-    const detailDTO: deleteValidator = {
+    const detailDTO: detailValidator = {
       postId: req.body.postId
     }
 
@@ -79,7 +79,7 @@ export default class PostsController implements Controller {
 
   private deletePost(req: Request, res: Response, next: NextFunction) {
     const deleteDTO: deleteValidator = { 
-      postId: req.body.postId
+      postId: Number(req.params.postId)
     }
 
     return Delete(deleteDTO)
@@ -99,7 +99,7 @@ export default class PostsController implements Controller {
     }
 
     return Update(updateDTO)
-      .then((post) => post && res.status(200).json({ isUpdated: true }))
+      .then(() => res.status(200).json({ isUpdated: true }))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())

@@ -3,7 +3,7 @@ import { IsString, IsNotEmpty, IsNumber, Length,IsAlphanumeric } from 'class-val
 export default class createCommentValidator {
   @IsNumber()
   @IsNotEmpty()
-  postId: number 
+  postId: number
 
   @IsString()
   @IsNotEmpty()

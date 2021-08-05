@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../../Infrastructures/utils/prisma'
 import readBookmarkValidator from '../validators/readBookmark.validator'
 
 export default (DTO: readBookmarkValidator) => {
-  const Bookmark = new PrismaClient().bookmark
+  const Bookmark = prisma.bookmark
   return Bookmark.findMany({ where: DTO })
 }

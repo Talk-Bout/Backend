@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../../Infrastructures/utils/prisma'
 import deleteLikeValidator from '../validators/deleteLike.validator'
 
 export default (DTO: deleteLikeValidator) => {
-  const Like = new PrismaClient().like
+  const Like = prisma.like
   return Like.delete({ where: DTO })
 }

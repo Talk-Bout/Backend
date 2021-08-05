@@ -1,6 +1,7 @@
-import { PrismaClient } from '.prisma/client'
-import readValidator from '../validators/readComment.validator'
-export default  (DTO : readValidator ) => {
-  const Comment = new PrismaClient().comment
-  return  Comment.findMany({ where:  DTO })
+import { prisma } from '../../Infrastructures/utils/prisma'
+import readCommentValidator from '../validators/readComment.validator'
+
+export default async function (DTO: readCommentValidator) {
+  const Comment = prisma.comment
+  return Comment.findMany({ where: DTO })
 }

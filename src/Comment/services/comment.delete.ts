@@ -1,6 +1,7 @@
-import { PrismaClient } from '.prisma/client'
+import { prisma } from '../../Infrastructures/utils/prisma'
+import deleteCommentValidator from '../validators/deleteComment.validator'
 
-export default  (DTO: any) => {
-  const Comment = new PrismaClient().comment
+export default async function (DTO: deleteCommentValidator) {
+  const Comment = prisma.comment
   return Comment.delete({ where: DTO })
 }

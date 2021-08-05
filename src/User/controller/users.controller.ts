@@ -36,7 +36,7 @@ export default class UsersController implements Controller {
 
     this.router
       .route(this.path + '/:nickname/posts')
-      .get(authenticate, validate(readMyPostValidator), this.getMyPosts)
+      .get(validate(readMyPostValidator), this.getMyPosts)
   }
 
   private createUser(req: Request, res: Response, next: NextFunction) {
@@ -47,11 +47,11 @@ export default class UsersController implements Controller {
     }
 
     if (req.body.password != req.body.confirmPassword) {
-      next(() => new ValidationFailureException())
+      next(new ValidationFailureException())
     }
 
     return Create(createDTO)
-      .then((user) => user && res.status(201).json({ isCreated: true }))
+      .then(() => res.status(201).json({ isCreated: true }))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())

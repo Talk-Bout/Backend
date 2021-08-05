@@ -19,8 +19,11 @@ export default class BookmarksController implements Controller {
     private initializeRoutes() {
       this.router
         .route(this.path)
-        .post(authenticate, validate(createValidator), this.createLike)
-        .delete(authenticate, validate(deleteValidator), this.deleteLike)
+        .post( validate(createValidator), this.createLike)
+
+      this.router
+        .route(this.path + '/:likeId')
+        .delete(this.deleteLike)
     }
 
     private createLike(req: Request, res: Response, next: NextFunction) {
@@ -39,7 +42,7 @@ export default class BookmarksController implements Controller {
 
     private deleteLike(req: Request, res: Response, next: NextFunction) {
         const deleteDTO: deleteValidator = {
-            likeId: req.body.postId
+            likeId: Number(req.params.postId)
         }
 
         return Delete(deleteDTO)
@@ -47,6 +50,6 @@ export default class BookmarksController implements Controller {
             .catch((err) => {
                 console.error(err)
                 next(new PromiseRejectionException())
-              })
+            })
     }
 }

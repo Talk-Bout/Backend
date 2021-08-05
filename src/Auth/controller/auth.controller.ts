@@ -5,6 +5,7 @@ import validate from '../../Infrastructures/middlewares/validation.middleware'
 import loginValidator from '../validators/login.validator'
 import login from '../services/login'
 import crypto from '../../Infrastructures/utils/crypto'
+import authenticate from '../../Infrastructures/middlewares/authentication.middleware'
 import jwt from '../../Infrastructures/utils/generateToken'
 
 export default class AuthController implements Controller {
@@ -17,6 +18,7 @@ export default class AuthController implements Controller {
 
   private initializeRoutes() {
     this.router.post(this.path, validate(loginValidator), this.login)
+    this.router.get('/tokenUser', authenticate, this.tokenUser)
   }
 
   private async login(req: Request, res: Response, next: NextFunction) {
@@ -41,5 +43,9 @@ export default class AuthController implements Controller {
     } else {
       return res.status(400).json({ login: "failed" })
     }
+  }
+
+  private tokenUser(req: Request, res: Response, next: NextFunction) {
+    return res.send(res.locals.userInfo.nickname)
   }
 }

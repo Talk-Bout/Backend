@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../../Infrastructures/utils/prisma'
 import deleteBookmarkValidator from '../validators/deleteBookmark.validator'
 
 export default (DTO: deleteBookmarkValidator) => {
-  const Bookmark = new PrismaClient().bookmark
+  const Bookmark = prisma.bookmark
   return Bookmark.delete({ where: DTO })
 }

@@ -1,8 +1,8 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../../Infrastructures/utils/prisma'
 import updatePostValidator from '../validators/updatePost.validator'
 
 export default (DTO: updatePostValidator) => {
-  const Post = new PrismaClient().post
+  const Post = prisma.post
   return Post.update({
     where: {
       postId: DTO.postId

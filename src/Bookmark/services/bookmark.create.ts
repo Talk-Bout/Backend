@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../../Infrastructures/utils/prisma'
 import createBookmarkValidator from '../validators/createBookmark.validator'
 
 export default (DTO: createBookmarkValidator) => {
-  const Bookmark = new PrismaClient().bookmark
+  const Bookmark = prisma.bookmark
   return Bookmark.create({ data: DTO })
 }
