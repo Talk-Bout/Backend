@@ -23,6 +23,7 @@ model User {
   answerLike   AnswerLike[]
   review       Review[]
   Star         Star[]
+
 }
 
 model Profile {
@@ -43,10 +44,12 @@ model Post {
   user     User       @relation(fields: [nickname], references: [nickname])
   nickname String
   category String
+  viewCount Int       @default(0)
   bookmark Bookmark[]
   postLike PostLike[]
   comment  Comment[]
 }
+
 
 model Comment {
   commentId Int      @id @default(autoincrement())

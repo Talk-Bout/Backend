@@ -29,7 +29,7 @@ export default class BookmarksController implements Controller {
     private createLike(req: Request, res: Response, next: NextFunction) {
         const createDTO: createValidator = {
             nickname: req.body.nickname,
-            postId: req.body.postId
+            postId: Number(req.body.postId)
         }
 
         return Create(createDTO)
