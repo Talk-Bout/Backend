@@ -1,7 +1,7 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["referentialActions"]
 }
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -30,29 +30,31 @@ model Profile {
   profilePic String?
   role       String?
 
-  user     User   @relation(fields: [nickname], references: [nickname])
-  nickname String
+  user     User?   @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
+  nickname String?
 }
 
 model Post {
-  postId    Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  title     String
-  content   String
-  viewCount Int @default(0)
-  user     User       @relation(fields: [nickname], references: [nickname])
-  nickname String
-  category String
-  image    String?
-  bookmark Bookmark[]
-  postLike PostLike[]
-  comment  Comment[]
+  postId       Int          @id @default(autoincrement())
+  createdAt    DateTime     @default(now())
+  title        String
+  content      String
+  viewCount    Int          @default(0)
+
+  user         User?        @relation(fields: [nickname], references: [nickname], onDelete: SetNull )
+  nickname     String?      
+
+  category     String
+  image        String?
+  bookmark     Bookmark[]
+  postLike     PostLike[]
+  comment      Comment[]
 }
 
 model PostLike {
   postLikeId Int    @id @default(autoincrement())
-  user       User   @relation(fields: [nickname], references: [nickname])
-  nickname   String
+  user       User?   @relation(fields: [nickname], references: [nickname] ,onDelete: SetNull)
+  nickname   String?
   post       Post   @relation(fields: [postId], references: [postId])
   postId     Int
 
@@ -64,16 +66,16 @@ model Comment {
   createdAt DateTime @default(now())
   content   String
 
-  user     User   @relation(fields: [nickname], references: [nickname])
-  nickname String
+  user     User?   @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
+  nickname String?
   post     Post   @relation(fields: [postId], references: [postId])
   postId   Int
 }
 
 model Bookmark {
   bookmarkId Int    @id @default(autoincrement())
-  user       User   @relation(fields: [nickname], references: [nickname])
-  nickname   String
+  user       User?   @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
+  nickname   String?
   post       Post   @relation(fields: [postId], references: [postId])
   postId     Int
 
@@ -83,8 +85,8 @@ model Bookmark {
 model Question {
   questionId   Int            @id @default(autoincrement())
   createdAt    DateTime       @default(now())
-  user         User           @relation(fields: [nickname], references: [nickname])
-  nickname     String
+  user         User?           @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
+  nickname     String?
   title        String
   content      String
   answer       Answer[]
@@ -93,8 +95,8 @@ model Question {
 
 model QuestionLike {
   questionLikeId Int      @id @default(autoincrement())
-  user           User     @relation(fields: [nickname], references: [nickname])
-  nickname       String
+  user           User?     @relation(fields: [nickname], references: [nickname] ,onDelete: SetNull)
+  nickname       String?
   question       Question @relation(fields: [questionId], references: [questionId])
   questionId     Int
 
@@ -103,8 +105,8 @@ model QuestionLike {
 
 model Answer {
   answerId           Int          @id @default(autoincrement())
-  user               User         @relation(fields: [nickname], references: [nickname])
-  nickname           String
+  user               User?         @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
+  nickname           String?
   content            String
   answerLike         AnswerLike[]
   Question           Question?    @relation(fields: [questionQuestionId], references: [questionId])
@@ -113,8 +115,8 @@ model Answer {
 
 model AnswerLike {
   answerLikeId Int    @id @default(autoincrement())
-  user         User   @relation(fields: [nickname], references: [nickname])
-  nickname     String
+  user         User?   @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
+  nickname     String?
   answer       Answer @relation(fields: [answerId], references: [answerId])
   answerId     Int
 
@@ -132,8 +134,8 @@ model BootCamp {
 model Review {
   reviewId             Int       @id @default(autoincrement())
   createdAt            DateTime  @default(now())
-  user                 User      @relation(fields: [nickname], references: [nickname])
-  nickname             String
+  user                 User?      @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
+  nickname             String?
   bootcamp             BootCamp  @relation(fields: [bootcampName], references: [bootcampName])
   bootcampName         String
   season               String
@@ -147,8 +149,8 @@ model Review {
 model Community {
   communityId          Int      @id @default(autoincrement())
   createdAt            DateTime @default(now())
-  user                 User     @relation(fields: [nickname], references: [nickname])
-  nickname             String
+  user                 User?     @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
+  nickname             String?
   bootcamp             BootCamp  @relation(fields: [bootcampName], references: [bootcampName])
   bootcampName         String
   content              String
