@@ -8,21 +8,21 @@ datasource db {
 }
 
 model User {
-  nickname String @id
-  email    String @unique
-  password String
+  nickname      String     @id
+  email         String     @unique
+  password      String
 
-  profile      Profile?
-  comment      Comment[]
-  post         Post[]
-  bookmark     Bookmark[]
-  question     Question[]
-  answer       Answer[]
-  postLike     PostLike[]
-  questionLike QuestionLike[]
-  answerLike   AnswerLike[]
-  review       Review[]
-  community    Community[]
+  profile       Profile?
+  comment       Comment[]
+  post          Post[]
+  bookmark      Bookmark[]
+  question      Question[]
+  answer        Answer[]
+  postLike      PostLike[]
+  questionLike  QuestionLike[]
+  answerLike    AnswerLike[]
+  review        Review[]
+  community     Community[]
 }
 
 model Profile {
@@ -39,7 +39,7 @@ model Post {
   createdAt DateTime @default(now())
   title     String
   content   String
-
+  viewCount Int @default(0)
   user     User       @relation(fields: [nickname], references: [nickname])
   nickname String
   category String
