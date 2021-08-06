@@ -4,7 +4,6 @@ import readDetailValidator from '../validators/readDetail.validator'
 export default (DTO: readDetailValidator) => {
   const Post = prisma.post
 
-
   const targetPost = Post.update({
     where:{postId: DTO.postId},
     data:{
@@ -13,5 +12,7 @@ export default (DTO: readDetailValidator) => {
       },
     }
   })
+  
   return targetPost
 }
+
