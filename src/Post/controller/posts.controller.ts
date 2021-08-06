@@ -13,15 +13,11 @@ import Update from '../services/post.update'
 import Delete from '../services/post.delete'
 import Detail from '../services/post.detail'
 import authenticate from '../../Infrastructures/middlewares/authentication.middleware'
-//import {viewCounter} from '../../Infrastructures/interfaces/viewcounter.interface'
-
-const viewObj :any = new Object
-                            
 
 export default class PostsController implements Controller {
   public readonly path = '/posts'
   public readonly router = express.Router()
-  
+
   constructor() {
     this.initializeRoutes()
   }
@@ -30,12 +26,12 @@ export default class PostsController implements Controller {
     this.router
       .route(this.path)
       .get(this.readPost)
-      .post( validate(createValidator), this.createPost)
+      .post(validate(createValidator), this.createPost)
 
     this.router
       .route(this.path + '/:postId')
       .get(validate(detailValidator), this.readDetail)
-      .patch( validate(updateValidator), this.updatePost)
+      .patch(validate(updateValidator), this.updatePost)
       .delete(this.deletePost)
   }
 
@@ -44,7 +40,8 @@ export default class PostsController implements Controller {
       title: req.body.title,
       content: req.body.content,
       category: req.body.category,
-      nickname: req.body.nickname
+      nickname: req.body.nickname,
+      image: req.body.image
     }
 
     return Create(createDTO)
@@ -56,7 +53,7 @@ export default class PostsController implements Controller {
   }
 
   private readPost(req: Request, res: Response, next: NextFunction) {
-    const readDTO: readValidator = { 
+    const readDTO: readValidator = {
       category: req.body.category || undefined
     }
 
@@ -69,48 +66,12 @@ export default class PostsController implements Controller {
   }
 
   private readDetail(req: Request, res: Response, next: NextFunction) {
-    const viewCnt : number = 0
-
     const detailDTO: detailValidator = {
-      postId: req.body.postId
+      postId: Number(req.body.postId)
     }
 
     return Detail(detailDTO)
-      .then((post) => {
-        
-        
-    //     if (post) {
-    //       //조회수 증가 viewObj 오브젝트 만들어서 postId : [username] 형식으로 저장
-    //       if (!viewObj[req.body.postId]) {
-    //           viewObj[req.params.post_id] = []
-    //       }
-    //       if (viewObj[req.params.post_id].indexOf(req.user.username) == -1) {
-    //           //username이 없다면 배열에 추가하고 조회수 증가
-    //           viewObj[req.params.post_id].push(req.user.username)
-    //           post.view++
-    //           setTimeout(() => {
-    //               //10분이 지나면 배열에서 삭제해서 다시 조회수가 증가할 수 있게 만듦
-    //               viewObj[req.params.post_id].splice(
-    //                   viewObj[req.params.post_id].indexOf(req.user.username),
-    //                   1
-    //               )
-    //           }, 600000)
-    //           for (let i in viewObj) {
-    //               //username이 하나도 없으면 해당 오브젝트 삭제
-    //               if (i.length == 0) {
-    //                   delete viewObj.i
-    //               }
-    //           }
-    //       }
-
-
-
-
-
-        
-        
-        
-        res.status(200).json(post)})
+      .then((post) => res.status(200).json(post))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())
@@ -118,7 +79,7 @@ export default class PostsController implements Controller {
   }
 
   private deletePost(req: Request, res: Response, next: NextFunction) {
-    const deleteDTO: deleteValidator = { 
+    const deleteDTO: deleteValidator = {
       postId: Number(req.params.postId)
     }
 
@@ -135,7 +96,8 @@ export default class PostsController implements Controller {
       title: req.body.title,
       postId: Number(req.body.postId),
       content: req.body.content,
-      category: req.body.category
+      category: req.body.category,
+      image: req.body.image
     }
 
     return Update(updateDTO)

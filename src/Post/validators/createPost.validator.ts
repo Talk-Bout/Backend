@@ -3,6 +3,7 @@ import {
   IsString,
   IsAlphanumeric,
   IsNotEmpty,
+  IsOptional
 } from 'class-validator'
 
 export default class createPostValidator {
@@ -14,14 +15,17 @@ export default class createPostValidator {
 
   @IsString()
   @IsNotEmpty()
-  title :string
+  title: string
 
   @IsString()
   @IsNotEmpty()
-  content: string 
+  content: string
 
   @IsString()
   @IsAlphanumeric()
   @IsNotEmpty()
   category: string
+
+  @IsOptional()
+  image: string
 }

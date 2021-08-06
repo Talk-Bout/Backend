@@ -21,12 +21,10 @@ export default class BookmarksController implements Controller {
   private initializeRoutes() {
     this.router
       .route(this.path)
-      .get( validate(readValidator), this.readBookmark)
-      .post( validate(createValidator), this.createBookmark)
+      .get(validate(readValidator), this.readBookmark)
+      .post(validate(createValidator), this.createBookmark)
 
-    this.router
-      .route(this.path + '/:bookmarkId')
-      .delete(this.deleteBookmark)
+    this.router.route(this.path + '/:bookmarkId').delete(this.deleteBookmark)
   }
 
   private readBookmark(req: Request, res: Response, next: NextFunction) {
