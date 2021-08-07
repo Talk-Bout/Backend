@@ -11,7 +11,8 @@ model User {
   nickname      String     @id
   email         String     @unique
   password      String
-
+  profilePic    String?
+  role          String?
   profile       Profile?
   comment       Comment[]
   post          Post[]
@@ -25,14 +26,7 @@ model User {
   community     Community[]
 }
 
-model Profile {
-  profileId  Int     @id @default(autoincrement())
-  profilePic String?
-  role       String?
 
-  user     User?   @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
-  nickname String?
-}
 
 model Post {
   postId       Int          @id @default(autoincrement())
