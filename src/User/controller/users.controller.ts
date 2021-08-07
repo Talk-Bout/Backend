@@ -2,15 +2,21 @@ import { NextFunction, Request, Response, Router } from 'express'
 import Controller from '../../Infrastructures/interfaces/controller.interface'
 import validate from '../../Infrastructures/middlewares/validation.middleware'
 import createValidator from '../validators/createUser.validator'
+import updateValidator from '../validators/updateUser.validator'
 import readEmailValidator from '../validators/readEmail.validator'
 import readNicknameValidator from '../validators/readNickname.validator'
-import readMyPostValidator from '../validators/readMyPost.validator'
+import nicknameValidator from '../validators/nickname.validator'
 import ValidationFailureException from '../../Infrastructures/exceptions/ValidationFailure.exception'
 import PromiseRejectionException from '../../Infrastructures/exceptions/PromiseRejection.exception'
 import Create from '../services/user.create'
 import readEmail from '../services/email.read'
 import readNickname from '../services/nickname.read'
 import readMyPosts from '../services/myPosts.read' 
+import readMYBookmark from '../services/myBookmark.read'
+import updateUser from '../services/user.update'
+import deleteUser from '../services/user.delete'
+import { generateHash } from '../../Infrastructures/utils/bcrypy'
+
 import authenticate from '../../Infrastructures/middlewares/authentication.middleware'
 
 export default class UsersController implements Controller {
@@ -33,17 +39,24 @@ export default class UsersController implements Controller {
     this.router
       .route(this.path + '/nickname/:nickname')
       .get(validate(readNicknameValidator), this.readNicknameExist)
+      .patch(validate(nicknameValidator), this.updateUser)
+      .delete(validate(nicknameValidator), this.deleteUser)
 
     this.router
       .route(this.path + '/:nickname/posts')
-      .get(validate(readMyPostValidator), this.getMyPosts)
+      .get(validate(nicknameValidator), this.getMyPosts)
+
+    this.router
+      .route(this.path + '/nickname/:bookmark')
+      .get(validate(nicknameValidator), this.getMyBookmark)
+
   }
 
   private createUser(req: Request, res: Response, next: NextFunction) {
     const createDTO: createValidator = {
       nickname: req.body.nickname,
       email: req.body.email,
-      password: req.body.password
+      password: generateHash(req.body.password)
     }
 
     if (req.body.password != req.body.confirmPassword) {
@@ -61,6 +74,7 @@ export default class UsersController implements Controller {
   private readEmailExist(req: Request, res: Response, next: NextFunction) {
     const readEmailDTO: readEmailValidator = {
       email: req.body.email
+      
     }
 
     return readEmail(readEmailDTO)
@@ -83,9 +97,38 @@ export default class UsersController implements Controller {
         next(new PromiseRejectionException())
       })
   }
+  private updateUser (req: Request, res: Response, next: NextFunction) {
+    const updateUserDTO: updateValidator = {
+      nickname: req.body.nickname,
+      password: req.body.password,
+      email:req.body.email
+    }
+    
+    updateUser(updateUserDTO)
+    .then((result)=>res.status(200).json({isUpdated: result?  true: false}))
+    .catch((err) => {
+      console.error(err)
+      next(new PromiseRejectionException())
+    })
+  }
+  
+
+  private deleteUser (req: Request, res: Response, next: NextFunction) {
+    const deleteUserDTO: nicknameValidator = {nickname: req.body.nickname}
+    deleteUser(deleteUserDTO)
+    .then((result)=>res.status(200).json({isDeleted: result? true: false}))
+    .catch((err) => {
+      console.error(err)
+      next(new PromiseRejectionException())
+    })
+  }
+
+
+
+
 
   private getMyPosts(req: Request, res: Response, next: NextFunction) {
-    const myPostDTO: readMyPostValidator = {
+    const myPostDTO: nicknameValidator = {
       nickname: req.body.nickname
     }
 
@@ -96,4 +139,14 @@ export default class UsersController implements Controller {
         next(new PromiseRejectionException())
       })
   }
+
+
+  private getMyBookmark(req: Request, res: Response, next: NextFunction) {
+    const myBookmarkDTO: nicknameValidator = {
+      nickname: req.body.nickname
+    }
+
+    readMYBookmark(myBookmarkDTO)
+  }
+
 }
