@@ -107,8 +107,8 @@ model Answer {
   nickname           String
   content            String
   answerLike         AnswerLike[]
-  Question           Question?    @relation(fields: [questionQuestionId], references: [questionId])
-  questionQuestionId Int?
+  Question           Question?    @relation(fields: [questionId], references: [questionId])
+  questionId         Int
 }
 
 model AnswerLike {

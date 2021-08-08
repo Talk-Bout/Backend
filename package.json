@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "tsc -p . && node dist/Infrastructures/server.js",
-    "start": "node dist/Infrastructures/server.js",
+    "dev": "tsc -p . && node dist/server.js",
+    "start": "node dist/server.js",
     "build": "tsc -p .",
     "studio": "npx prisma studio",
     "migrate": "npx prisma migrate dev && npx prisma generate"

@@ -7,6 +7,7 @@ import ImageController from './Image/image.controller'
 import BookmarksController from './Bookmark/controller/bookmarks.controller'
 import PostLikeController from './postLike/controller/postLikes.controller'
 import BootcampController from './Bootcamp/controller/bootcamp.controller'
+import QuestionsController from './Question/controller/question.controller'
 
 new App([
   new UsersController(),
@@ -16,5 +17,6 @@ new App([
   new ImageController(),
   new BookmarksController(),
   new PostLikeController(),
-  new BootcampController()
+  new BootcampController(),
+  new QuestionsController()
 ])
