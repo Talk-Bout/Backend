@@ -12,4 +12,3 @@ import {
     @IsNotEmpty()
     nickname: string
   }
-  
