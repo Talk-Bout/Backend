@@ -18,7 +18,7 @@ export default class createReviewValidator {
   bootcampName: string
 
   @IsString()
-  season: string
+  status: string
 
   @IsString()
   pros: string

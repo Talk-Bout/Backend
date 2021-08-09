@@ -28,46 +28,46 @@ export default class CommentsController implements Controller {
 
     this.router
       .route(this.path)
-      .get(validate(readValidator), this.readComment)
+      .get(this.readComment)
       .post(validate(createValidator), this.createComment)
   }
 
   private async readComment(req: Request, res: Response, next: NextFunction) {
-    const readDTO :readValidator = { 
-      postId : Number(req.body.postId)
+    const readDTO: readValidator = {
+      postId: Number(req.params.postId)
     }
 
     return Read(readDTO)
-    .then((commentList)=>res.status(200).json(commentList))
-    .catch((err) => {
-      console.error(err)
-      next(new PromiseRejectionException())
-    })
+      .then((commentList) => res.status(200).json(commentList))
+      .catch((err) => {
+        console.error(err)
+        next(new PromiseRejectionException())
+      })
   }
 
   private async createComment(req: Request, res: Response, next: NextFunction) {
-    const createDTO : createValidator = { 
-      postId : Number(req.body.postId),
+    const createDTO: createValidator = {
+      postId: Number(req.body.postId),
       nickname: req.body.nickname,
       content: req.body.content
     }
 
     return Create(createDTO)
-    .then((newComment)=>res.status(201).json(newComment))
-    .catch((err) =>{
-      console.error(err)
-      next(new PromiseRejectionException())
-    })
+      .then((newComment) => res.status(201).json(newComment))
+      .catch((err) => {
+        console.error(err)
+        next(new PromiseRejectionException())
+      })
   }
 
   private async updateComment(req: Request, res: Response, next: NextFunction) {
-    const updateDTO : updateValidator = {
+    const updateDTO: updateValidator = {
       commentId: Number(req.body.commentId),
       content: req.body.content
     }
 
-     return Update(updateDTO)
-      .then((modifiedComment)=> res.status(200).json(modifiedComment))
+    return Update(updateDTO)
+      .then((modifiedComment) => res.status(200).json(modifiedComment))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())
@@ -75,15 +75,15 @@ export default class CommentsController implements Controller {
   }
 
   private async deleteComment(req: Request, res: Response, next: NextFunction) {
-    const deleteDTO : deleteValidator = {
+    const deleteDTO: deleteValidator = {
       commentId: Number(req.params.commentId)
-    } 
+    }
 
-    return  Delete(deleteDTO)
-    .then(() => res.status(200).json({ isDeleted: true }))
-    .catch((err) => {
+    return Delete(deleteDTO)
+      .then(() => res.status(200).json({ isDeleted: true }))
+      .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())
-    })
+      })
   }
 }
