@@ -31,12 +31,12 @@ model User {
 }
 
 model Post {
-  postId    Int          @id @default(autoincrement())
+  postId    Int         @id @default(autoincrement())
   createdAt DateTime     @default(now())
   title     String   
   content   String   
   viewCount Int          @default(0)
-  user      User?         @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  user      User?        @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname  String?
   category  String
   image     String?
@@ -46,39 +46,39 @@ model Post {
 }
 
 model PostLike {
-  postLikeId Int    @id @default(autoincrement())
-  user       User?   @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  postLikeId Int      @id @default(autoincrement())
+  user       User?     @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname   String?
-  post       Post?   @relation(fields: [postId], references: [postId], onDelete: SetNull)
+  post       Post?     @relation(fields: [postId], references: [postId], onDelete: SetNull)
   postId     Int?
 
   @@unique([postId, nickname])
 }
 
 model Comment {
-  commentId Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  commentId Int       @id @default(autoincrement())
+  createdAt DateTime   @default(now())
   content   String
-  user      User?     @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  user      User?      @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname  String?
-  post      Post?     @relation(fields: [postId], references: [postId], onDelete: SetNull)
+  post      Post?      @relation(fields: [postId], references: [postId], onDelete: SetNull)
   postId    Int?
 }
 
 model Bookmark {
-  bookmarkId Int    @id @default(autoincrement())
-  user       User?   @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  bookmarkId Int      @id @default(autoincrement())
+  user       User?     @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname   String?
-  post       Post?   @relation(fields: [postId], references: [postId], onDelete: SetNull)
+  post       Post?     @relation(fields: [postId], references: [postId], onDelete: SetNull)
   postId     Int?
 
   @@unique([postId, nickname])
 }
 
 model Question {
-  questionId   Int            @id @default(autoincrement())
+  questionId   Int           @id @default(autoincrement())
   createdAt    DateTime       @default(now())
-  user         User?           @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  user         User?          @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   viewCount    Int            @default(0)
   nickname     String?
   title        String
@@ -93,6 +93,16 @@ model QuestionLike {
   nickname       String?
   question       Question? @relation(fields: [questionId], references: [questionId], onDelete: SetNull)
   questionId     Int?
+
+  @@unique([questionId, nickname])
+}
+
+model QuestionBookmark {
+  questionBookmarkId  Int        @id @default(autoincrement())
+  user                User?       @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  nickname            String?
+  question            Question?   @relation(fields: [questionId], references: [questionId], onDelete: SetNull)
+  questionId          Int?
 
   @@unique([questionId, nickname])
 }
@@ -137,11 +147,11 @@ model BootcampBookmark {
 }
 
 model Review {
-  reviewId     Int      @id @default(autoincrement())
-  createdAt    DateTime @default(now())
-  user         User?     @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  reviewId     Int       @id @default(autoincrement())
+  createdAt    DateTime   @default(now())
+  user         User?      @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname     String?
-  bootcamp     BootCamp? @relation(fields: [bootcampName], references: [bootcampName], onDelete: SetNull)
+  bootcamp     BootCamp?  @relation(fields: [bootcampName], references: [bootcampName], onDelete: SetNull)
   bootcampName String?
   status       String
   pros         String
@@ -152,11 +162,11 @@ model Review {
 }
 
 model Community {
-  communityId       Int                 @id @default(autoincrement())
+  communityId       Int                @id @default(autoincrement())
   createdAt         DateTime            @default(now())
-  user              User?                @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  user              User?               @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname          String?
-  bootcamp          BootCamp?            @relation(fields: [bootcampName], references: [bootcampName], onDelete: SetNull)
+  bootcamp          BootCamp?           @relation(fields: [bootcampName], references: [bootcampName], onDelete: SetNull)
   bootcampName      String?
   viewCount         Int                 @default(0)
   title             String
@@ -178,7 +188,7 @@ model CommunityLike {
 
 model CommunityComment {
   communityCommentId Int       @id @default(autoincrement())
-  createdAt          DateTime  @default(now())
+  createdAt          DateTime   @default(now())
   content            String
   user               User?      @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname           String?
