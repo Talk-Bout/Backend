@@ -15,13 +15,9 @@ export default class createAnswerValidator {
 
   @IsString()
   @IsNotEmpty()
-  title: string
-
-  @IsString()
-  @IsNotEmpty()
   content: string
 
   @IsNumber()
   @IsNotEmpty()
-  questionId: string
+  questionId: number
 }

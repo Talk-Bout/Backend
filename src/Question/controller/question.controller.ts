@@ -34,9 +34,9 @@ export default class QuestionsController implements Controller {
 
     this.router
       .route(this.path + '/:questionId')
-      .get(validate(readDetailValidator), this.readDetail)
+      .get(this.readDetail)
       .patch(validate(updateValidator), this.updateQuestion)
-      .delete(validate(deleteValidator), this.deleteQuestion)
+      .delete(this.deleteQuestion)
 
     this.router
       .route(this.answerPath)
@@ -69,7 +69,9 @@ export default class QuestionsController implements Controller {
   }
 
   private readDetail(req: Request, res: Response, next: NextFunction) {
-    const readDTO: readDetailValidator = { questionId: req.body.questionId }
+    const readDTO = {
+      questionId: Number(req.params.questionId)
+    }
 
     return DetailRead(readDTO)
       .then((questions) => res.status(200).json(questions))
@@ -95,8 +97,8 @@ export default class QuestionsController implements Controller {
   }
 
   private deleteQuestion(req: Request, res: Response, next: NextFunction) {
-    const deleteDTO: deleteValidator = {
-      questionId: Number (req.params.questionId) //
+    const deleteDTO = {
+      questionId: Number(req.params.questionId)
     }
 
     return Delete(deleteDTO)
@@ -109,12 +111,11 @@ export default class QuestionsController implements Controller {
 
   private createAnswer(req: Request, res: Response, next: NextFunction) {
     const createDTO: createAnswerValidator = {
-      title: req.body.title,
       content: req.body.content,
       nickname: req.body.nickname,
-      questionId: req.body.question
+      questionId: req.body.questionId
     }
-
+    console.log(createDTO.questionId)
     return AnswersCreate(createDTO)
       .then(() => res.status(201).json({ isCreated: true }))
       .catch((err) => {

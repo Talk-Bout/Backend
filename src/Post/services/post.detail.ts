@@ -5,6 +5,6 @@ export default (DTO: readDetailValidator) => {
   const Post = prisma.post
   return Post.findUnique({
     where: DTO,
-    include: { postLike: true } // how to get average?
+    include: { postLike: true }
   })
 }

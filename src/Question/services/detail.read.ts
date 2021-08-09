@@ -1,7 +1,16 @@
 import { prisma } from '../../Infrastructures/utils/prisma'
 import readDetailValidator from '../validators/readDetail.validator'
 
-export default (DTO: readDetailValidator) => {
+export default async (DTO: readDetailValidator) => {
   const Detail = prisma.question
-  return Detail.findUnique({ where: DTO })
+  const questionDetail = await Detail.findUnique({
+    where: DTO,
+    include: {
+      questionLike: true,
+      answer: true
+    }
+  })
+  const questionLikes = questionDetail?.questionLike.length
+  const numberOfAnswers = questionDetail?.answer.length
+  return { questionDetail, questionLikes, numberOfAnswers }
 }
