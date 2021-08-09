@@ -1,3 +1,4 @@
+
 import { prisma } from '../../Infrastructures/utils/prisma'
 import readDetailValidator from '../validators/readDetail.validator'
 

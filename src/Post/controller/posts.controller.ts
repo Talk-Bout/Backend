@@ -43,7 +43,7 @@ export default class PostsController implements Controller {
       nickname: req.body.nickname,
       image: req.body.image
     }
-
+    
     return Create(createDTO)
       .then(() => res.status(201).json({ isCreated: true }))
       .catch((err) => {
