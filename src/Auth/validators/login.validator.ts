@@ -6,9 +6,9 @@ export default class loginValidator {
   @IsEmail()
   email: string
 
-  @Length(8, 16)
+  @Length(8, 60)
   @IsString()
   @IsNotEmpty()
-  @Matches(RegExp(/^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,16}$/))
+  @Matches(RegExp(/^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,60}$/))
   password: string
 }

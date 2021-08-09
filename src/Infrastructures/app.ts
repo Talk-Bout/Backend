@@ -5,7 +5,11 @@ import morgan from 'morgan'
 import errorMiddleware from './middlewares/errorHandler.middleware'
 import log from './utils/log'
 import 'dotenv/config'
+const passportConfig = require("../Infrastructures/middlewares/passportStrategy1")
 
+import * as passport from 'passport'
+import './middlewares/passportStrategy1'
+ 
 export default class App {
   public app: express.Application
   public port: number
@@ -25,6 +29,11 @@ export default class App {
     this.app.use(cors({ credentials: true }))
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }))
+    //require('./config/passport')(passport);
+    passportConfig()
+    this.app.use(passport.initialize())
+    this.app.use(passport.session());
+    
   }
 
   private initializeControllers(controllers: Array<controller>) {
