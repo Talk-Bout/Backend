@@ -2,55 +2,55 @@ generator client {
   provider = "prisma-client-js"
   previewFeatures = ["referentialActions"]
 }
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  nickname      String     @id
-  email         String     @unique
-  password      String
-  profilePic    String?
-  role          String?
-  profile       Profile?
-  comment       Comment[]
-  post          Post[]
-  bookmark      Bookmark[]
-  question      Question[]
-  answer        Answer[]
-  postLike      PostLike[]
-  questionLike  QuestionLike[]
-  answerLike    AnswerLike[]
-  review        Review[]
-  community     Community[]
+  nickname          String              @id
+  email             String              @unique
+  password          String
+  profilePic        String?
+  role              String?
+  comment           Comment[]
+  post              Post[]
+  bookmark          Bookmark[]
+  question          Question[]
+  answer            Answer[]
+  postLike          PostLike[]
+  questionLike      QuestionLike[]
+  answerLike        AnswerLike[]
+  review            Review[]
+  community         Community[]
+  communityLike     CommunityLike[]
+  communityBookmark CommunityBookmark[]
+  communityComment  CommunityComment[]
+  bootcampBookmark  BootcampBookmark[]
 }
 
-
-
 model Post {
-  postId       Int          @id @default(autoincrement())
-  createdAt    DateTime     @default(now())
-  title        String
-  content      String
-  viewCount    Int          @default(0)
-
-  user         User?        @relation(fields: [nickname], references: [nickname], onDelete: SetNull )
-  nickname     String?      
-
-  category     String
-  image        String?
-  bookmark     Bookmark[]
-  postLike     PostLike[]
-  comment      Comment[]
+  postId    Int          @id @default(autoincrement())
+  createdAt DateTime     @default(now())
+  title     String   
+  content   String   
+  viewCount Int          @default(0)
+  user      User?         @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  nickname  String?
+  category  String
+  image     String?
+  bookmark  Bookmark[]
+  postLike  PostLike[]
+  comment   Comment[]
 }
 
 model PostLike {
   postLikeId Int    @id @default(autoincrement())
-  user       User?   @relation(fields: [nickname], references: [nickname] ,onDelete: SetNull)
+  user       User?   @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname   String?
-  post       Post   @relation(fields: [postId], references: [postId])
-  postId     Int
+  post       Post?   @relation(fields: [postId], references: [postId], onDelete: SetNull)
+  postId     Int?
 
   @@unique([postId, nickname])
 }
@@ -59,19 +59,18 @@ model Comment {
   commentId Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   content   String
-
-  user     User?   @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
-  nickname String?
-  post     Post   @relation(fields: [postId], references: [postId])
-  postId   Int
+  user      User?     @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  nickname  String?
+  post      Post?     @relation(fields: [postId], references: [postId], onDelete: SetNull)
+  postId    Int?
 }
 
 model Bookmark {
   bookmarkId Int    @id @default(autoincrement())
-  user       User?   @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
+  user       User?   @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname   String?
-  post       Post   @relation(fields: [postId], references: [postId])
-  postId     Int
+  post       Post?   @relation(fields: [postId], references: [postId], onDelete: SetNull)
+  postId     Int?
 
   @@unique([postId, nickname])
 }
@@ -79,7 +78,8 @@ model Bookmark {
 model Question {
   questionId   Int            @id @default(autoincrement())
   createdAt    DateTime       @default(now())
-  user         User?           @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
+  user         User?           @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  viewCount    Int            @default(0)
   nickname     String?
   title        String
   content      String
@@ -89,63 +89,109 @@ model Question {
 
 model QuestionLike {
   questionLikeId Int      @id @default(autoincrement())
-  user           User?     @relation(fields: [nickname], references: [nickname] ,onDelete: SetNull)
+  user           User?     @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname       String?
-  question       Question @relation(fields: [questionId], references: [questionId])
-  questionId     Int
+  question       Question? @relation(fields: [questionId], references: [questionId], onDelete: SetNull)
+  questionId     Int?
 
   @@unique([questionId, nickname])
 }
 
 model Answer {
   answerId           Int          @id @default(autoincrement())
-  user               User?         @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
+  user               User?         @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname           String?
   content            String
   answerLike         AnswerLike[]
-  Question           Question?    @relation(fields: [questionId], references: [questionId])
-  questionId         Int
+  question           Question?    @relation(fields: [questionId], references: [questionId], onDelete: SetNull)
+  questionId Int?
 }
 
 model AnswerLike {
   answerLikeId Int    @id @default(autoincrement())
-  user         User?   @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
+  user         User?   @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname     String?
-  answer       Answer @relation(fields: [answerId], references: [answerId])
-  answerId     Int
+  answer       Answer? @relation(fields: [answerId], references: [answerId], onDelete: SetNull)
+  answerId     Int?
 
   @@unique([answerId, nickname])
 }
 
 model BootCamp {
-  bootcampName String   @id
-  desc         String
-  logo         String
-  review       Review[]
-  community    Community[]
+  bootcampName     String             @id
+  desc             String
+  logo             String
+  review           Review[]
+  community        Community[]
+  bootcampBookmark BootcampBookmark[]
+}
+
+model BootcampBookmark {
+  BootcampbookmarkId Int      @id @default(autoincrement())
+  user               User?     @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  nickname           String?
+  bootcamp           BootCamp? @relation(fields: [bootcampName], references: [bootcampName], onDelete: SetNull)
+  bootcampName       String?
+
+  @@unique([bootcampName, nickname])
 }
 
 model Review {
-  reviewId             Int       @id @default(autoincrement())
-  createdAt            DateTime  @default(now())
-  user                 User?      @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
-  nickname             String?
-  bootcamp             BootCamp  @relation(fields: [bootcampName], references: [bootcampName])
-  bootcampName         String
-  season               String
-  pros                 String
-  cons                 String
-  stars                Float
+  reviewId     Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now())
+  user         User?     @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  nickname     String?
+  bootcamp     BootCamp? @relation(fields: [bootcampName], references: [bootcampName], onDelete: SetNull)
+  bootcampName String?
+  status       String
+  pros         String
+  cons         String
+  stars        Float
 
   @@unique([nickname, bootcampName])
 }
 
 model Community {
-  communityId          Int      @id @default(autoincrement())
-  createdAt            DateTime @default(now())
-  user                 User?     @relation(fields: [nickname], references: [nickname],onDelete: SetNull)
-  nickname             String?
-  bootcamp             BootCamp  @relation(fields: [bootcampName], references: [bootcampName])
-  bootcampName         String
-  content              String
+  communityId       Int                 @id @default(autoincrement())
+  createdAt         DateTime            @default(now())
+  user              User?                @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  nickname          String?
+  bootcamp          BootCamp?            @relation(fields: [bootcampName], references: [bootcampName], onDelete: SetNull)
+  bootcampName      String?
+  viewCount         Int                 @default(0)
+  title             String
+  content           String
+  communityLike     CommunityLike[]
+  communityComment  CommunityComment[]
+  communityBookmark CommunityBookmark[]
+}
+
+model CommunityLike {
+  communityLikeId Int       @id @default(autoincrement())
+  user            User?      @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  nickname        String?
+  community       Community? @relation(fields: [communityId], references: [communityId], onDelete: SetNull)
+  communityId     Int?
+
+  @@unique([communityId, nickname])
+}
+
+model CommunityComment {
+  communityCommentId Int       @id @default(autoincrement())
+  createdAt          DateTime  @default(now())
+  content            String
+  user               User?      @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  nickname           String?
+  community          Community? @relation(fields: [communityId], references: [communityId], onDelete: SetNull)
+  communityId        Int?
+}
+
+model CommunityBookmark {
+  communityBookmarkId Int       @id @default(autoincrement())
+  user                User?      @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
+  nickname            String?
+  community           Community? @relation(fields: [communityId], references: [communityId], onDelete: SetNull)
+  communityId         Int?
+
+  @@unique([communityId, nickname])
 }
