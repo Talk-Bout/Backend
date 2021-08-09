@@ -2,21 +2,19 @@ import { NextFunction, Request, Response, Router } from 'express'
 import Controller from '../../Infrastructures/interfaces/controller.interface'
 import validate from '../../Infrastructures/middlewares/validation.middleware'
 import createValidator from '../validators/createUser.validator'
-import updateValidator from '../validators/updateUser.validator'
 import readEmailValidator from '../validators/readEmail.validator'
-import readNicknameValidator from '../validators/readNickname.validator'
-import nicknameValidator from '../validators/nickname.validator'
+import NicknameValidator from '../validators/Nickname.validator'
+import readMyPostValidator from '../validators/readMyPost.validator'
 import ValidationFailureException from '../../Infrastructures/exceptions/ValidationFailure.exception'
 import PromiseRejectionException from '../../Infrastructures/exceptions/PromiseRejection.exception'
 import Create from '../services/user.create'
 import readEmail from '../services/email.read'
 import readNickname from '../services/nickname.read'
-import readMyPosts from '../services/myPosts.read' 
-import readMYBookmark from '../services/myBookmark.read'
+import readMyPosts from '../services/myPosts.read'
+import updateUserValidator from '../validators/updateUser.validator'
 import updateUser from '../services/user.update'
 import deleteUser from '../services/user.delete'
-import { generateHash } from '../../Infrastructures/utils/bcrypy'
-
+import readMyBookmark from '../services/myBookmark.read'
 import authenticate from '../../Infrastructures/middlewares/authentication.middleware'
 
 export default class UsersController implements Controller {
@@ -31,32 +29,30 @@ export default class UsersController implements Controller {
     this.router
       .route(this.path)
       .post(validate(createValidator), this.createUser)
-    
-    this.router
-      .route(this.path + '/email/:email')
-      .get(validate(readEmailValidator), this.readEmailExist)
+
+    this.router.route(this.path + '/email/:email').get(this.readEmailExist)
 
     this.router
       .route(this.path + '/nickname/:nickname')
-      .get(validate(readNicknameValidator), this.readNicknameExist)
-      .patch(validate(nicknameValidator), this.updateUser)
-      .delete(validate(nicknameValidator), this.deleteUser)
+      .get(this.readNicknameExist)
+
+    this.router
+      .route(this.path + '/:nickname')
+      .patch(validate(updateUserValidator), this.updateUser)
+      .delete(this.deleteUser)
 
     this.router
       .route(this.path + '/:nickname/posts')
-      .get(validate(nicknameValidator), this.getMyPosts)
+      .get(validate(readMyPostValidator), this.getMyPosts)
 
-    this.router
-      .route(this.path + '/nickname/:bookmark')
-      .get(validate(nicknameValidator), this.getMyBookmark)
-
+    this.router.route(this.path + '/:nickname/bookmark').get(this.getMyBookmark)
   }
 
   private createUser(req: Request, res: Response, next: NextFunction) {
     const createDTO: createValidator = {
       nickname: req.body.nickname,
       email: req.body.email,
-      password: generateHash(req.body.password)
+      password: req.body.password
     }
 
     if (req.body.password != req.body.confirmPassword) {
@@ -73,12 +69,11 @@ export default class UsersController implements Controller {
 
   private readEmailExist(req: Request, res: Response, next: NextFunction) {
     const readEmailDTO: readEmailValidator = {
-      email: req.body.email
-      
+      email: req.params.email
     }
 
     return readEmail(readEmailDTO)
-      .then((exist) => res.status(200).json({isExist: exist ? true : false}))
+      .then((exist) => res.status(200).json({ isExist: exist ? true : false }))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())
@@ -86,50 +81,53 @@ export default class UsersController implements Controller {
   }
 
   private readNicknameExist(req: Request, res: Response, next: NextFunction) {
-    const readNicknameDTO: readNicknameValidator = {
-      nickname: req.body.nickname
+    const readNicknameDTO: NicknameValidator = {
+      nickname: req.params.nickname
     }
 
     return readNickname(readNicknameDTO)
-      .then((exist) => res.status(200).json({isExist: exist ? true : false}))
+      .then((exist) => res.status(200).json({ isExist: exist ? true : false }))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())
       })
   }
-  private updateUser (req: Request, res: Response, next: NextFunction) {
-    const updateUserDTO: updateValidator = {
+
+  private updateUser(req: Request, res: Response, next: NextFunction) {
+    const updateUserDTO: updateUserValidator = {
       nickname: req.body.nickname,
       password: req.body.password,
-      email:req.body.email
+      email: req.body.email,
+      profilePic: req.body.profilePic || null,
+      role: req.body.role || null
     }
-    
-    updateUser(updateUserDTO)
-    .then((result)=>res.status(200).json({isUpdated: result?  true: false}))
-    .catch((err) => {
-      console.error(err)
-      next(new PromiseRejectionException())
-    })
-  }
-  
 
-  private deleteUser (req: Request, res: Response, next: NextFunction) {
-    const deleteUserDTO: nicknameValidator = {nickname: req.body.nickname}
-    deleteUser(deleteUserDTO)
-    .then((result)=>res.status(200).json({isDeleted: result? true: false}))
-    .catch((err) => {
-      console.error(err)
-      next(new PromiseRejectionException())
-    })
+    return updateUser(updateUserDTO)
+      .then((result) => res.status(200).json({ isUpdated: true }))
+      .catch((err) => {
+        console.error(err)
+        next(new PromiseRejectionException())
+      })
   }
 
+  private deleteUser(req: Request, res: Response, next: NextFunction) {
+    const deleteUserDTO: NicknameValidator = {
+      nickname: req.params.nickname
+    }
 
-
-
+    return deleteUser(deleteUserDTO)
+      .then((result) =>
+        res.status(200).json({ isDeleted: result ? true : false })
+      )
+      .catch((err) => {
+        console.error(err)
+        next(new PromiseRejectionException())
+      })
+  }
 
   private getMyPosts(req: Request, res: Response, next: NextFunction) {
-    const myPostDTO: nicknameValidator = {
-      nickname: req.body.nickname
+    const myPostDTO: readMyPostValidator = {
+      nickname: req.params.nickname
     }
 
     return readMyPosts(myPostDTO)
@@ -140,13 +138,16 @@ export default class UsersController implements Controller {
       })
   }
 
-
   private getMyBookmark(req: Request, res: Response, next: NextFunction) {
-    const myBookmarkDTO: nicknameValidator = {
-      nickname: req.body.nickname
+    const myBookmarkDTO: NicknameValidator = {
+      nickname: req.params.nickname
     }
 
-    readMYBookmark(myBookmarkDTO)
+    return readMyBookmark(myBookmarkDTO)
+      .then((bookmarks) => res.status(200).json(bookmarks))
+      .catch((err) => {
+        console.error(err)
+        next(new PromiseRejectionException())
+      })
   }
-
 }

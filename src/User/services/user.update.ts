@@ -3,20 +3,18 @@ import updateUserValidator from '../validators/updateUser.validator'
 
 export default async (DTO: updateUserValidator) => {
   const User = prisma.user
-  const Profile = prisma.profile
 
-  
   const user = await User.update({
     where: {
-      email: DTO.email
+      nickname: DTO.nickname
     },
     data: {
       password: DTO.password,
       nickname: DTO.nickname,
-      // add profile pic
+      profilePic: DTO.profilePic,
+      role: DTO.role
     }
   })
 
-  
-  return user 
+  return user
 }

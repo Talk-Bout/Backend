@@ -4,10 +4,11 @@ import {
   IsString,
   IsAlphanumeric,
   IsNotEmpty,
-  Matches
+  Matches,
+  IsOptional
 } from 'class-validator'
 
-export default class createUserValidator {
+export default class updateUserValidator {
   @Length(4, 10)
   @IsString()
   @IsAlphanumeric()
@@ -24,4 +25,12 @@ export default class createUserValidator {
   @IsString()
   @IsNotEmpty()
   email: string
+
+  @IsString()
+  @IsOptional()
+  profilePic: string
+
+  @IsString()
+  @IsOptional()
+  role: string
 }

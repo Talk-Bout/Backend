@@ -30,7 +30,7 @@ export default class PostsController implements Controller {
 
     this.router
       .route(this.path + '/:postId')
-      .get(validate(detailValidator), this.readDetail)
+      .get(this.readDetail)
       .patch(validate(updateValidator), this.updatePost)
       .delete(this.deletePost)
   }
@@ -43,7 +43,7 @@ export default class PostsController implements Controller {
       nickname: req.body.nickname,
       image: req.body.image
     }
-    
+
     return Create(createDTO)
       .then(() => res.status(201).json({ isCreated: true }))
       .catch((err) => {
@@ -67,7 +67,7 @@ export default class PostsController implements Controller {
 
   private readDetail(req: Request, res: Response, next: NextFunction) {
     const detailDTO: detailValidator = {
-      postId: Number(req.body.postId)
+      postId: Number(req.params.postId)
     }
 
     return Detail(detailDTO)

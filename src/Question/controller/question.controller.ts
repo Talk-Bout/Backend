@@ -123,7 +123,7 @@ export default class QuestionsController implements Controller {
         next(new PromiseRejectionException())
       })
   }
-
+  // 질문 조회 카운트 추가해라!!!!!!
   private readAnswer(req: Request, res: Response, next: NextFunction) {
     return AnswersRead()
       .then((answers) => res.status(200).json(answers))
