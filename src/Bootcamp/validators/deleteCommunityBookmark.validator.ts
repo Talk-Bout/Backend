@@ -2,9 +2,9 @@ import {
   IsNumber,
   IsNotEmpty
 } from 'class-validator'
-
-export default class readDetailValidator {
+  
+export default class deleteBookmarkValidator {
   @IsNumber()
   @IsNotEmpty()
-  questionId: number
+  communityBookmarkId: number
 }

@@ -139,7 +139,7 @@ model BootCamp {
 }
 
 model BootcampBookmark {
-  BootcampbookmarkId   Int        @id @default(autoincrement())
+  bootcampBookmarkId   Int        @id @default(autoincrement())
   user                 User?      @relation(fields: [nickname], references: [nickname], onDelete: SetNull)
   nickname             String?
   bootcamp             BootCamp?  @relation(fields: [bootcampName], references: [bootcampName], onDelete: SetNull)

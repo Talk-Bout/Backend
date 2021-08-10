@@ -29,16 +29,23 @@ import CommunityLikeIdValidator from '../validators/communityLikeId.validator'
 import createLike from '../services/like.create'
 import deleteLike from '../services/like.delete'
 import validate from '../../Infrastructures/middlewares/validation.middleware'
+import CreateBookmark from '../services/bookmark.create'
+import DeleteBookmark from '../services/bookmark.delete'
+import bookmarkCreateValidator from '../validators/createBookmark.validator'
+import bookmarkdeleteValidator from '../validators/deleteBookmark.validator'
 
 export default class BootcampController implements Controller {
   public readonly path = '/bootcamp'
-  public readonly reviewPath = '/bootcamp/:bootcampName/review'
+  public readonly reviewPath = '/bootcamp/:bootcampName/reviews'
   public readonly communityPath = '/bootcamp/:bootcampName/community'
   public readonly communityCommentPath =
     '/bootcamp/:bootcampName/community/:communityId/comments'
   public readonly communityLikePath =
-    '/bootcamp/:bootcampName/community/:communityId/Like'
+    '/bootcamp/:bootcampName/community/:communityId/likes'
+  public readonly communityBookmarkPath =
+    '/bootcamp/:bootcampName/community/:communityId/bookmarks'
   public readonly router = Router({ mergeParams: true })
+  public readonly bootcampBookmarkPath = '/bootcamp/:bootcampName/bookmarks'
 
   constructor() {
     this.initializeRoutes()
@@ -77,6 +84,41 @@ export default class BootcampController implements Controller {
     this.router
       .route(this.communityLikePath + '/:communityLikeId')
       .delete(this.deleteCommunityLike)
+
+    this.router
+      .route(this.communityBookmarkPath + '/:communityBookmarkId')
+
+    this.router
+      .route(this.bootcampBookmarkPath)
+      .post(this.createBootcampBookmark)
+      .delete(this.deleteBootcampBookmark)
+  }
+
+  private createBootcampBookmark(req: Request, res: Response, next: NextFunction) {
+    const createDTO: bookmarkCreateValidator = {
+      nickname: req.body.nickname,
+      bootcampName: req.body.bootcampName
+    }
+
+    return CreateBookmark(createDTO)
+      .then(() => res.status(201).json({ isCreated: true }))
+      .catch((err) => {
+        console.error(err)
+        next(new PromiseRejectionException())
+      })
+  }
+
+  private deleteBootcampBookmark(req: Request, res: Response, next: NextFunction) {
+    const deleteDTO: bookmarkdeleteValidator = {
+      bootcampBookmarkId: Number(req.params.bootcampBookmarkId)
+    }
+
+    return DeleteBookmark(deleteDTO)
+      .then(() => res.status(200).json({ isDeleted: true }))
+      .catch((err) => {
+        console.error(err)
+        next(new PromiseRejectionException())
+      })
   }
 
   private getBootcamp(req: Request, res: Response, next: NextFunction) {

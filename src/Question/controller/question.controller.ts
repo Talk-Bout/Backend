@@ -145,7 +145,7 @@ export default class QuestionsController implements Controller {
 
   private deleteBookmark(req: Request, res: Response, next: NextFunction) {
     const deleteDTO: deleteBookmarkValidator = {
-      bookmarkId: Number(req.params.bookmarkId)
+      questionBookmarkId: Number(req.params.questionBookmarkId)
     }
 
     return questionBookmarkDelete(deleteDTO)

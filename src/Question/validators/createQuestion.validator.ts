@@ -1,7 +1,6 @@
 import {
   Length,
   IsString,
-  IsAlphanumeric,
   IsNotEmpty,
 } from 'class-validator'
 
