@@ -55,13 +55,13 @@ export default class QuestionsController implements Controller {
 
     this.router
       .route(this.bookmarkPath)
-      .post(this.createBookmark)
-      .delete(this.deleteBookmark)
+      .post(validate(createBookmarkValidator), this.createBookmark)
+      .delete(validate(deleteBookmarkValidator),this.deleteBookmark)
 
     this.router
       .route(this.likePath)
-      .post(this.createQuestionLike)
-      .delete(this.deleteQuestionLike)
+      .post(validate(createLikeValidator),this.createQuestionLike)
+      .delete(validate(deleteLikeValidator),this.deleteQuestionLike)
   }
 
   private readQuestions(req: Request, res: Response, next: NextFunction) {
