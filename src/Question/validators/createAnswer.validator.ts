@@ -3,9 +3,10 @@ import {
   IsString,
   IsAlphanumeric,
   IsNotEmpty,
+  IsNumber,
 } from 'class-validator'
 
-export default class createQuestionValidator {
+export default class createAnswerValidator {
   @Length(4, 10)
   @IsString()
   @IsNotEmpty()
@@ -13,10 +14,9 @@ export default class createQuestionValidator {
 
   @IsString()
   @IsNotEmpty()
-  title :string
-
-  @IsString()
-  @IsNotEmpty()
   content: string
-  
+
+  @IsNumber()
+  @IsNotEmpty()
+  questionId: number
 }

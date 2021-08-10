@@ -6,8 +6,12 @@ import validate from '../../Infrastructures/middlewares/validation.middleware'
 import createValidator from '../validators/createQuestion.validator'
 import updateValidator from '../validators/updateQuestion.validator'
 import deleteValidator from '../validators/deleteDetail.validator'
-import createAnswerValidator from '../validators/createAnswers.validator'
+import createAnswerValidator from '../validators/createAnswer.validator'
 import readDetailValidator from '../validators/readDetail.validator'
+import createBookmarkValidator from '../validators/createQuestionBookmark.validator'
+import deleteBookmarkValidator from '../validators/deleteQuestionBookmarks.validator'
+import createLikeValidator from '../validators/createLike.validator'
+import deleteLikeValidator from '../validators/deleteLike.validator'
 /* services */
 import AnswersCreate from '../services/answers.create'
 import AnswersRead from '../services/answers.read'
@@ -16,9 +20,15 @@ import Read from '../services/questions.read'
 import DetailRead from '../services/detail.read'
 import Update from '../services/question.update'
 import Delete from '../services/question.delete'
+import questionBookmarkCreate from '../services/bookmark.create'
+import questionBookmarkDelete from '../services/bookmark.delete'
+import questionLikeCreate from '../services/questionLike.create'
+import questionLikeDelete from '../services/questionLike.delete'
 
 export default class QuestionsController implements Controller {
   public readonly path = '/questions'
+  public readonly bookmarkPath = '/questions/:questionId/bookmarks'
+  public readonly likePath = '/questions/:questionId/likes'
   public readonly answerPath = '/questions/:questionId/answers'
   public readonly router = express.Router()
 
@@ -42,6 +52,16 @@ export default class QuestionsController implements Controller {
       .route(this.answerPath)
       .post(validate(createAnswerValidator), this.createAnswer)
       .get(this.readAnswer)
+
+    this.router
+      .route(this.bookmarkPath)
+      .post(this.createBookmark)
+      .delete(this.deleteBookmark)
+
+    this.router
+      .route(this.likePath)
+      .post(this.createQuestionLike)
+      .delete(this.deleteQuestionLike)
   }
 
   private readQuestions(req: Request, res: Response, next: NextFunction) {
@@ -103,6 +123,62 @@ export default class QuestionsController implements Controller {
 
     return Delete(deleteDTO)
       .then(() => res.status(200).json({ isDeleted: true }))
+      .catch((err) => {
+        console.error(err)
+        next(new PromiseRejectionException())
+      })
+  }
+
+  private createBookmark(req: Request, res: Response, next: NextFunction) {
+    const createDTO: createBookmarkValidator = {
+      nickname: req.body.nickname,
+      questionId: req.body.questionId
+    }
+
+    return questionBookmarkCreate(createDTO)
+      .then(() => res.status(201).json({ isCreated: true }))
+      .catch((err) => {
+        console.error(err)
+        next(new PromiseRejectionException())
+      })
+  }
+
+  private deleteBookmark(req: Request, res: Response, next: NextFunction) {
+    const deleteDTO: deleteBookmarkValidator = {
+      bookmarkId: Number(req.params.bookmarkId)
+    }
+
+    return questionBookmarkDelete(deleteDTO)
+      .then(() => res.status(200).json({ isDeleted: true }))
+      .catch((err) => {
+        console.error(err)
+        next(new PromiseRejectionException())
+      })
+  }
+
+  private createQuestionLike(req: Request, res: Response, next: NextFunction) {
+    const createDTO: createLikeValidator = {
+      nickname: req.body.nickname,
+      questionId: req.body.questionId,
+      likeId: req.body.likeId
+    }
+
+    return questionLikeCreate(createDTO)
+      .then(() => res.status(201).json({ isCreated: true }))
+      .catch((err) => {
+        console.error(err)  
+        next(new PromiseRejectionException())
+       })
+  }
+
+  private deleteQuestionLike(req: Request, res: Response, next: NextFunction) {
+    const deleteDTO: deleteLikeValidator = {
+      questionId: Number(req.body.questionId),
+      likeId: Number(req.body.likeId)
+    }
+
+    return questionLikeDelete(deleteDTO)
+      .then(() => res.status(201).json({ isDeletted: true }))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())

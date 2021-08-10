@@ -1,23 +1,21 @@
 import {
   Length,
   IsString,
-  IsAlphanumeric,
   IsNotEmpty,
-  IsNumber,
+  IsNumber
 } from 'class-validator'
 
-export default class createAnswerValidator {
+export default class createQuestionValidator {
   @Length(4, 10)
   @IsString()
-  @IsAlphanumeric()
   @IsNotEmpty()
   nickname: string
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  content: string
+  questionId : number
 
   @IsNumber()
   @IsNotEmpty()
-  questionId: number
+  likeId: number
 }
