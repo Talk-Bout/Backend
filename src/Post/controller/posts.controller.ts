@@ -17,7 +17,7 @@ import authenticate from '../../Infrastructures/middlewares/authentication.middl
 export default class PostsController implements Controller {
   public readonly path = '/posts'
   public readonly router = express.Router()
-  
+
   constructor() {
     this.initializeRoutes()
   }
@@ -26,12 +26,12 @@ export default class PostsController implements Controller {
     this.router
       .route(this.path)
       .get(this.readPost)
-      .post( validate(createValidator), this.createPost)
+      .post(validate(createValidator), this.createPost)
 
     this.router
       .route(this.path + '/:postId')
-      .get(validate(detailValidator), this.readDetail)
-      .patch( validate(updateValidator), this.updatePost)
+      .get(this.readDetail)
+      .patch(validate(updateValidator), this.updatePost)
       .delete(this.deletePost)
   }
 
@@ -40,7 +40,8 @@ export default class PostsController implements Controller {
       title: req.body.title,
       content: req.body.content,
       category: req.body.category,
-      nickname: req.body.nickname
+      nickname: req.body.nickname,
+      image: req.body.image
     }
 
     return Create(createDTO)
@@ -52,7 +53,7 @@ export default class PostsController implements Controller {
   }
 
   private readPost(req: Request, res: Response, next: NextFunction) {
-    const readDTO: readValidator = { 
+    const readDTO: readValidator = {
       category: req.body.category || undefined
     }
 
@@ -66,7 +67,7 @@ export default class PostsController implements Controller {
 
   private readDetail(req: Request, res: Response, next: NextFunction) {
     const detailDTO: detailValidator = {
-      postId: req.body.postId
+      postId: Number(req.params.postId)
     }
 
     return Detail(detailDTO)
@@ -78,7 +79,7 @@ export default class PostsController implements Controller {
   }
 
   private deletePost(req: Request, res: Response, next: NextFunction) {
-    const deleteDTO: deleteValidator = { 
+    const deleteDTO: deleteValidator = {
       postId: Number(req.params.postId)
     }
 
@@ -95,7 +96,8 @@ export default class PostsController implements Controller {
       title: req.body.title,
       postId: Number(req.body.postId),
       content: req.body.content,
-      category: req.body.category
+      category: req.body.category,
+      image: req.body.image
     }
 
     return Update(updateDTO)

@@ -12,7 +12,7 @@ export default class App {
 
   constructor(controllers: Array<controller>) {
     this.app = express()
-    this.port = Number(process.env.PORT)
+    this.port = Number(process.env.PORT) || 3000
 
     this.initializeMiddlewares()
     this.initializeControllers(controllers)
@@ -29,7 +29,7 @@ export default class App {
 
   private initializeControllers(controllers: Array<controller>) {
     this.app.use('/images', express.static('uploads'))
-    
+
     controllers.forEach((controller) => {
       this.app.use('/', controller.router)
     })

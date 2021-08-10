@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "tsc -p . && node dist/Infrastructures/server.js",
-    "start": "node dist/Infrastructures/server.js",
+    "dev": "tsc -p . && node dist/server.js",
+    "start": "node dist/server.js",
     "build": "tsc -p .",
     "studio": "npx prisma studio",
     "migrate": "npx prisma migrate dev && npx prisma generate"
@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^2.27.0",
+    "@prisma/client": "^2.28.0",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "cors": "^2.8.5",
@@ -39,7 +39,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "nodemon": "^2.0.12",
     "prettier": "^2.3.2",
-    "prisma": "^2.27.0",
+    "prisma": "^2.28.0",
     "ts-node": "^10.1.0",
     "typescript": "^4.3.5"
   },
