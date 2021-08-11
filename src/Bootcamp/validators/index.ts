@@ -1,0 +1,1 @@
+export { default as CreateBootcampJunctionValidator } from './createBookmark.validator'
