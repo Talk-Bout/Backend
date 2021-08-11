@@ -46,6 +46,7 @@ export default class AuthController implements Controller {
   }
 
   private tokenUser(req: Request, res: Response, next: NextFunction) {
-    return res.send(res.locals.userInfo.nickname)
+    return res.send({nickname: res.locals.userInfo.nickname,
+                     profilePic: res.locals.userInfo.profilePic})
   }
 }
