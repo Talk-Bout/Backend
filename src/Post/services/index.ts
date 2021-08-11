@@ -1,5 +1,8 @@
 export { default as createPost } from './create.post'
 export { default as readPost } from './read.post'
+
+export { default as readPopular } from './read.popular'
+
 export { default as updatePost } from './update.post'
 export { default as deletePost } from './delete.post'
 export { default as detailPost } from './detail.post'

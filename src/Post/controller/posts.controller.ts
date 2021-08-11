@@ -3,12 +3,13 @@ import { validate } from '../../Infrastructures/middlewares'
 import { Controller } from '../../Infrastructures/interfaces'
 import { PromiseRejectionException } from '../../Infrastructures/exceptions'
 import { CreatePostValidator, UpdatePostValidator, CreatePostJunctionValidator } from '../validators'
-import { createPost, readPost, updatePost, deletePost, detailPost, 
+import { createPost, readPost, updatePost, deletePost, detailPost, readPopular,
   createPostLike, deletePostLike, createPostBookmark, deletePostBookmark } from '../services'
 
 export default class PostsController implements Controller {
   public readonly router = Router()
   public readonly path = '/posts'
+  public readonly popularpath = '/popular'
   public readonly likePath = '/posts/:postId/postLikes'
   public readonly bookmarkPath = '/posts/:postId/postBookmarks'
 
@@ -37,7 +38,27 @@ export default class PostsController implements Controller {
 
     this.router.route(this.bookmarkPath + '/:postBookmarkId')
       .delete(this.deletePostBookmark)
+
+    this.router.route(this.popularpath)
+      .get(this.getPostPopular)  
   }
+
+
+  private getPostPopular(req: Request, res: Response, next: NextFunction) {
+    // const page: number = Number(req.query.page)
+    // const category: string | undefined = (req.query.category as string) || undefined
+
+    // return readPost(category, page) // TEST
+    //   .then((posts) => res.status(200).json(posts))
+    //   .catch((err) => {
+    //     console.error(err)
+    //     next(new PromiseRejectionException())
+    //   })
+    readPopular()
+    res.send("hi")
+  }
+
+
 
   private postPost(req: Request, res: Response, next: NextFunction) {
     const createPostDTO: CreatePostValidator = {

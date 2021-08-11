@@ -1,15 +1,28 @@
 import { prisma } from '../../Infrastructures/utils/prisma'
 
-export default (category: string | undefined, page: number) => {
+export default async () => {
   const Post = prisma.post
-  const ITEMS_PER_PAGE = 8
+  let postWithLike = {}
 
-  return Post.findMany({
-    where: { AND: [{ category }] },
+  const posts = await Post.findMany({
     include: { postLike: true,
-               user:true },
-    skip: (page - 1) * ITEMS_PER_PAGE,
-    take: ITEMS_PER_PAGE * 3,
-    orderBy: [{ createdAt: 'desc' }]
+               user:true }
+    
   })
+
+ 
+  for (const post of posts ){
+    //console.log(post)
+    //console.log(`${post.postId} has ${post.postLike.length} like`)
+    post["likeNumber"] = post.postLike.length
+
+  }
+  posts.sort(function(a, b) {
+    return b.likeNumber - a.likeNumber;
+  });
+  console.log(posts);
 }
+
+
+
+
