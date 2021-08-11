@@ -8,7 +8,7 @@ export default (category: string | undefined, page: number) => {
     where: { AND: [{ category }] },
     include: { postLike: true },
     skip: (page - 1) * ITEMS_PER_PAGE,
-    take: ITEMS_PER_PAGE,
+    take: ITEMS_PER_PAGE * 3,
     orderBy: [{ createdAt: 'desc' }]
   })
 }

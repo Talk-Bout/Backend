@@ -10,7 +10,7 @@ export default (page: number) => {
       questionLike: true,
       answer: true 
     },
-    take: ITEMS_PER_PAGE,
+    take: ITEMS_PER_PAGE * 3,
     orderBy: [{ createdAt: 'desc' }]
   })
 }

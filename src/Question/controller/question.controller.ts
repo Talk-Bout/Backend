@@ -112,7 +112,7 @@ export default class QuestionsController implements Controller {
     }
 
     return createQuestionBookmark(createDTO)
-      .then(() => res.status(201).json({ isCreated: true }))
+      .then((bookmark) => res.status(201).json(bookmark))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())
@@ -137,7 +137,7 @@ export default class QuestionsController implements Controller {
     }
 
     return createQuestionLike(createDTO)
-      .then(() => res.status(201).json({ isCreated: true }))
+      .then((like) => res.status(201).json(like))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())

@@ -114,7 +114,7 @@ export default class PostsController implements Controller {
     }
 
     return createPostLike(createPostLikeDTO)
-      .then(() => res.status(200).json({ isCreated: true }))
+      .then((like) => res.status(200).json(like))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())
@@ -139,7 +139,7 @@ export default class PostsController implements Controller {
     }
 
     return createPostBookmark(createPostBookmarkDTO)
-      .then(() => res.status(200).json({ isCreated: true }))
+      .then((bookmark) => res.status(200).json(bookmark))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())
