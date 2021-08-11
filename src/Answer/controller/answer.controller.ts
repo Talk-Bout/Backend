@@ -60,7 +60,7 @@ export default class AnswersController implements Controller {
         }
 
         return createAnswerLike(createAnswerLikeDTO)
-            .then(() => res.status(200).json({ isCreated: true }))
+            .then((like) => res.status(200).json(like))
             .catch((err) => {
               console.error(err)
               next(new PromiseRejectionException())

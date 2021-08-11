@@ -43,7 +43,7 @@ export default class BootcampController implements Controller {
     }
 
     return createBootcampBookmark(createDTO)
-      .then(() => res.status(201).json({ isCreated: true }))
+      .then((bookmark) => res.status(201).json(bookmark))
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())

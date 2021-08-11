@@ -10,6 +10,11 @@ export default async (page: number) => {
     take: ITEMS_PER_PAGE,
   })
 
+  type bootcampsDTO = {
+    review: number
+    star: string
+  }
+
   for (let i = 0; i < bootcamps.length; i++) {
     let star = 0
     for (let j = 0; j < bootcamps[i].review.length; j++) {
@@ -17,7 +22,7 @@ export default async (page: number) => {
     }
     star = star / bootcamps[i].review.length
     bootcamps[i].review = [{ stars: Number(star.toPrecision(2)) }]
-  }
+  } 
 
   return bootcamps
 }

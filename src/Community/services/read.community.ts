@@ -11,6 +11,6 @@ export default async (bootcampName: string, page: number) => {
       communityComment: true
     },
     skip: (page - 1) * ITEMS_PER_PAGE,
-    take: ITEMS_PER_PAGE,
+    take: ITEMS_PER_PAGE * 3,
   })
 }

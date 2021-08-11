@@ -111,7 +111,7 @@ export default class BootcampController implements Controller {
       }
   
       return createCommunityLike(DTO)
-        .then(() => res.status(200).json({ isCreated: true }))
+        .then((like) => res.status(200).json(like))
         .catch((err) => {
           console.error(err)
           next(new PromiseRejectionException())
@@ -136,7 +136,7 @@ export default class BootcampController implements Controller {
       }
   
       return createCommunityBookmark(createDTO)
-        .then(() => res.status(201).json({ isCreated: true }))
+        .then((bookmark) => res.status(201).json(bookmark))
         .catch((err) => {
           console.error(err)
           next(new PromiseRejectionException())
