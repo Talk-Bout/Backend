@@ -3,12 +3,13 @@ import Controller from '../../Infrastructures/interfaces/controller.interface'
 import PromiseRejectionException from '../../Infrastructures/exceptions/PromiseRejection.exception'
 import validate from '../../Infrastructures/middlewares/validation.middleware'
 import { CreateQuestionValidator, UpdateQuestionValidator, CreateQuestionJunctionValidator } from '../validators'
-import { createQuestion, readQuestion, updateQuestion, deleteQuestion, detailQuestion, 
+import { createQuestion, readQuestion, updateQuestion, deleteQuestion, detailQuestion, readPopular,
   createQuestionLike, deleteQuestionLike, createQuestionBookmark, deleteQuestionBookmark} from '../services'
 
 export default class QuestionsController implements Controller {
   public readonly router = Router()
   public readonly path = '/questions'
+  public readonly popularPath = '/popular'
   public readonly bookmarkPath = '/questions/:questionId/questionBookmarks'
   public readonly likePath = '/questions/:questionId/questionLikes'
 
@@ -37,8 +38,14 @@ export default class QuestionsController implements Controller {
 
     this.router.route(this.likePath + '/:questionLikeId')
       .delete(this.deleteQuestionLike)
-  }
 
+      this.router.route(this.popularPath)
+      .get(this.getQuestionPopular)   
+  }
+  private getQuestionPopular(req: Request, res: Response, next: NextFunction) {
+    readPopular().then((questions)=> res.status(200).json(questions))
+    
+  }
   private getQuestions(req: Request, res: Response, next: NextFunction) {
     const page: number = Number(req.query.page)
 
@@ -48,6 +55,7 @@ export default class QuestionsController implements Controller {
         console.error(err)
         next(new PromiseRejectionException())
       })
+
   }
 
   private postQuestion(req: Request, res: Response, next: NextFunction) {
@@ -64,6 +72,14 @@ export default class QuestionsController implements Controller {
         console.error(err)
         next(new PromiseRejectionException())
       })
+  }
+
+
+
+  
+
+  private getPostPopular(req: Request, res: Response, next: NextFunction) {
+    res.send(readPopular())
   }
 
   private detailQuestion(req: Request, res: Response, next: NextFunction) {

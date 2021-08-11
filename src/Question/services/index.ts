@@ -1,5 +1,6 @@
 export { default as createQuestion } from './create.question'
 export { default as readQuestion } from './read.question'
+export { default as readPopular } from './read.popular'
 export { default as updateQuestion } from './update.question'
 export { default as deleteQuestion } from './delete.question'
 export { default as detailQuestion } from './detail.question'
