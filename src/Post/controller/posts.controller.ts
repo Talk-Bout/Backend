@@ -9,7 +9,7 @@ import { createPost, readPost, updatePost, deletePost, detailPost, readPopular,
 export default class PostsController implements Controller {
   public readonly router = Router()
   public readonly path = '/posts'
-  public readonly popularpath = '/popular'
+  public readonly popularPath = '/popular'
   public readonly likePath = '/posts/:postId/postLikes'
   public readonly bookmarkPath = '/posts/:postId/postBookmarks'
 
@@ -39,23 +39,14 @@ export default class PostsController implements Controller {
     this.router.route(this.bookmarkPath + '/:postBookmarkId')
       .delete(this.deletePostBookmark)
 
-    this.router.route(this.popularpath)
+    this.router.route(this.popularPath)
       .get(this.getPostPopular)  
   }
 
 
   private getPostPopular(req: Request, res: Response, next: NextFunction) {
-    // const page: number = Number(req.query.page)
-    // const category: string | undefined = (req.query.category as string) || undefined
-
-    // return readPost(category, page) // TEST
-    //   .then((posts) => res.status(200).json(posts))
-    //   .catch((err) => {
-    //     console.error(err)
-    //     next(new PromiseRejectionException())
-    //   })
-    readPopular()
-    res.send("hi")
+    readPopular().then((posts)=> res.status(200).json(posts))
+    
   }
 
 
