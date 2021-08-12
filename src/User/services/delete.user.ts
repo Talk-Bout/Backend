@@ -1,7 +1,8 @@
 import { prisma } from '../../Infrastructures/utils/prisma'
-import { NicknameValidator } from '../validators'
+import { DeleteUserValidator } from '../validators'
 
-export default async (nickname: NicknameValidator) => {
+export default async (DTO: DeleteUserValidator) => {
   const User = prisma.user
-  return User.delete({ where: nickname })
+  await prisma.feedback.create({ data: DTO })
+  return User.delete({ where: { nickname: DTO.nickname } })
 }

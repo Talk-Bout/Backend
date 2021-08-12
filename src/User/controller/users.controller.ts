@@ -1,10 +1,29 @@
 import { NextFunction, Request, Response, Router } from 'express'
 import { Controller } from '../../Infrastructures/interfaces'
 import { validate } from '../../Infrastructures/middlewares'
-import { PromiseRejectionException, ValidationFailureException } from '../../Infrastructures/exceptions'
-import { CreateUserValidator, UpdateUserValidator, EmailValidator, NicknameValidator } from '../validators'
-import { createUser, updateUser, deleteUser, readEmail, readNickname,
-  readMyPosts, readMyPostBookmarks, readMyBootcampBookmarks, readMyCommunityBookmarks, readMyQuestionBookmarks} from '../services'
+import {
+  PromiseRejectionException,
+  ValidationFailureException
+} from '../../Infrastructures/exceptions'
+import {
+  CreateUserValidator,
+  UpdateUserValidator,
+  EmailValidator,
+  NicknameValidator,
+  DeleteUserValidator
+} from '../validators'
+import {
+  createUser,
+  updateUser,
+  deleteUser,
+  readEmail,
+  readNickname,
+  readMyPosts,
+  readMyPostBookmarks,
+  readMyBootcampBookmarks,
+  readMyCommunityBookmarks,
+  readMyQuestionBookmarks
+} from '../services'
 
 export default class UsersController implements Controller {
   public readonly path = '/users'
@@ -14,37 +33,42 @@ export default class UsersController implements Controller {
     this.initializeRoutes()
   }
 
-    // read북마크s => 북마크 인덱스 => "북마크 데이터" 
-    // get 요청 닉네임 어떻게 validate할래?
-    // plainToClass 정말 필요한 거 맞아?
-    
+  // read북마크s => 북마크 인덱스 => "북마크 데이터"
+  // get 요청 닉네임 어떻게 validate할래?
+  // plainToClass 정말 필요한 거 맞아?
+
   private initializeRoutes() {
-    this.router.route(this.path)
+    this.router
+      .route(this.path)
       .post(validate(CreateUserValidator), this.postUser)
 
-    this.router.route(this.path + '/email/:email')
-      .get(this.getEmailExist)
+    this.router.route(this.path + '/email/:email').get(this.getEmailExist)
 
-    this.router.route(this.path + '/nickname/:nickname')
+    this.router
+      .route(this.path + '/nickname/:nickname')
       .get(this.getNicknameExist)
 
-    this.router.route(this.path + '/:nickname')
+    this.router
+      .route(this.path + '/:nickname')
       .patch(validate(UpdateUserValidator), this.updateUser)
-      .delete(this.deleteUser)
+      .post(this.deleteUser)
 
-    this.router.route(this.path + '/:nickname/posts')
-      .get(this.getMyPosts)
+    this.router.route(this.path + '/:nickname/posts').get(this.getMyPosts)
 
-    this.router.route(this.path + '/:nickname/postBookmarks')
+    this.router
+      .route(this.path + '/:nickname/postBookmarks')
       .get(this.getMyPostBookmarks)
 
-    this.router.route(this.path + '/:nickname/bootcampBookmarks')
+    this.router
+      .route(this.path + '/:nickname/bootcampBookmarks')
       .get(this.getMyBootcampBookmarks)
 
-    this.router.route(this.path + '/:nickname/communityBookmarks')
+    this.router
+      .route(this.path + '/:nickname/communityBookmarks')
       .get(this.getMyCommunityBookmarks)
 
-    this.router.route(this.path + '/:nickname/questionBookmarks')
+    this.router
+      .route(this.path + '/:nickname/questionBookmarks')
       .get(this.getMyQuestionBookmarks)
   }
 
@@ -111,14 +135,15 @@ export default class UsersController implements Controller {
   }
 
   private deleteUser(req: Request, res: Response, next: NextFunction) {
-    const nickname: NicknameValidator = {
-      nickname: req.params.nickname
+    const deleteUserDTO: DeleteUserValidator = {
+      nickname: req.params.nickname,
+      content: req.body.content
     }
 
-    return deleteUser(nickname)
-      .then((result) =>
+    return deleteUser(deleteUserDTO)
+      .then((result) => {
         res.status(200).json({ isDeleted: result ? true : false })
-      )
+      })
       .catch((err) => {
         console.error(err)
         next(new PromiseRejectionException())
@@ -151,7 +176,11 @@ export default class UsersController implements Controller {
       })
   }
 
-  private getMyBootcampBookmarks(req: Request, res: Response, next: NextFunction) {
+  private getMyBootcampBookmarks(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     const nickname: NicknameValidator = {
       nickname: req.params.nickname
     }
@@ -164,7 +193,11 @@ export default class UsersController implements Controller {
       })
   }
 
-  private getMyCommunityBookmarks(req: Request, res: Response, next: NextFunction) {
+  private getMyCommunityBookmarks(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     const nickname: NicknameValidator = {
       nickname: req.params.nickname
     }
@@ -177,7 +210,11 @@ export default class UsersController implements Controller {
       })
   }
 
-  private getMyQuestionBookmarks(req: Request, res: Response, next: NextFunction) {
+  private getMyQuestionBookmarks(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     const nickname: NicknameValidator = {
       nickname: req.params.nickname
     }

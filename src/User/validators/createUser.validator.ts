@@ -1,10 +1,4 @@
-import {
-  Length,
-  IsEmail,
-  IsString,
-  IsNotEmpty,
-  Matches
-} from 'class-validator'
+import { Length, IsEmail, IsString, IsNotEmpty, Matches } from 'class-validator'
 
 export default class CreateUserValidator {
   @Length(4, 10)

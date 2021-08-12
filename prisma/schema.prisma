@@ -32,6 +32,12 @@ model User {
   bootcampBookmark                BootcampBookmark[]
 }
 
+model Feedback {
+  feedbackId                      Int                   @id @default(autoincrement())
+  nickname                        String                
+  content                         String?
+}
+
 model Post {
   postId                          Int                    @id @default(autoincrement())
   createdAt                       DateTime               @default(now())
@@ -72,7 +78,7 @@ model PostLike {
 }
 
 model PostBookmark {
-  postBookmarkId                      Int                    @id @default(autoincrement())
+  postBookmarkId                  Int                    @id @default(autoincrement())
   postId                          Int?
   nickname                        String?
 
