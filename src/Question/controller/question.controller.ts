@@ -9,7 +9,7 @@ import { createQuestion, readQuestion, updateQuestion, deleteQuestion, detailQue
 export default class QuestionsController implements Controller {
   public readonly router = Router()
   public readonly path = '/questions'
-  public readonly popularPath = '/popular'
+  public readonly popularPath = '/popular/questions'
   public readonly bookmarkPath = '/questions/:questionId/questionBookmarks'
   public readonly likePath = '/questions/:questionId/questionLikes'
 
@@ -74,13 +74,6 @@ export default class QuestionsController implements Controller {
       })
   }
 
-
-
-  
-
-  private getPostPopular(req: Request, res: Response, next: NextFunction) {
-    res.send(readPopular())
-  }
 
   private detailQuestion(req: Request, res: Response, next: NextFunction) {
     const questionId: number = Number(req.params.questionId)

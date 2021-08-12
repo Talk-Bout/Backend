@@ -9,7 +9,7 @@ import { createPost, readPost, updatePost, deletePost, detailPost, readPopular,
 export default class PostsController implements Controller {
   public readonly router = Router()
   public readonly path = '/posts'
-  public readonly popularPath = '/popular'
+  public readonly popularPath = '/popular/posts'
   public readonly likePath = '/posts/:postId/postLikes'
   public readonly bookmarkPath = '/posts/:postId/postBookmarks'
 
