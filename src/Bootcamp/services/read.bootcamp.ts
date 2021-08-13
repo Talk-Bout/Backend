@@ -24,5 +24,8 @@ export default async (page: number) => {
     bootcamps[i].review = [{ stars: Number(star.toPrecision(2)) }]
   } 
 
+
+  //sort 
+
   return bootcamps
 }

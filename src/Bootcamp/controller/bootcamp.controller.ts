@@ -3,11 +3,12 @@ import { Router, Request, Response, NextFunction } from 'express'
 import { PromiseRejectionException } from '../../Infrastructures/exceptions'
 import { validate } from '../../Infrastructures/middlewares'
 import { CreateBootcampJunctionValidator } from '../validators'
-import { createBootcampBookmark, deleteBootcampBookmark, readBootcamp } from '../services'
+import { createBootcampBookmark, deleteBootcampBookmark, readBootcamp, readPopularBootcamp } from '../services'
 
 export default class BootcampController implements Controller {
   public readonly router = Router({ mergeParams: true })
   public readonly path = '/bootcamp'
+  public readonly popularPath = '/bootcamp/popular'
   public readonly bootcampBookmarkPath = '/bootcamp/:bootcampName/bootcampBookmarks'
 
   constructor() {
@@ -23,12 +24,26 @@ export default class BootcampController implements Controller {
 
     this.router.route(this.bootcampBookmarkPath + '/:bootcampBookmarkId')
       .delete(this.deleteBootcampBookmark)
+
+    this.router.route(this.popularPath)
+      .get(this.getPopularBootcamp)  
   }
 
   private getBootcamp(req: Request, res: Response, next: NextFunction) {
     const page: number = Number(req.query.page)
 
     return readBootcamp(page)
+      .then((bootcamps) => res.status(200).json(bootcamps))
+      .catch((err) => {
+        console.error(err)
+        next(new PromiseRejectionException())
+      })
+  }
+
+  private getPopularBootcamp(req: Request, res: Response, next: NextFunction) {
+    const page: number = Number(req.query.page)
+
+    return readPopularBootcamp(page)
       .then((bootcamps) => res.status(200).json(bootcamps))
       .catch((err) => {
         console.error(err)
