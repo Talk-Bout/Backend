@@ -3,7 +3,7 @@ import { Controller } from '../../Infrastructures/interfaces'
 import { PromiseRejectionException } from '../../Infrastructures/exceptions'
 import { validate } from '../../Infrastructures/middlewares'
 import { CreateAnswerValidator, CreateAnswerJunctionValidator } from '../validators'
-import { createAnswer, readAnswer, createAnswerLike, deleteAnswerLike } from '../services'
+import { createAnswer, readAnswer, createAnswerLike, deleteAnswerLike, readPopularAnswer } from '../services'
 
 export default class AnswersController implements Controller {
     public readonly path = '/questions/:questionId/answers'
@@ -27,9 +27,14 @@ export default class AnswersController implements Controller {
     }
 
     private getAnswer(req: Request, res: Response, next: NextFunction) {
-        const questionId: number = Number(req.params.questionId)
+        const getAnswerDTO = {
+            questionId : Number(req.params.questionId),
+            page :Number(req.query.page)
+        }
+        
+        console.log(getAnswerDTO)
 
-        return readAnswer(questionId)
+        return readPopularAnswer(getAnswerDTO)
             .then((answers) => res.status(200).json(answers))
             .catch((err) => {
               console.error(err)
