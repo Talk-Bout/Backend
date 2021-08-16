@@ -1,12 +1,9 @@
-import {
-    Length,
-    IsString,
-    IsNotEmpty
-} from 'class-validator'
-  
-export default class createUserValidator {
-    @Length(4, 10)
-    @IsString()
-    @IsNotEmpty()
-    nickname: string
+import { Length, IsString, IsAlphanumeric, IsNotEmpty } from 'class-validator'
+
+export default class NicknameValidator {
+  @Length(4, 10)
+  @IsString()
+  @IsAlphanumeric()
+  @IsNotEmpty()
+  nickname: string
 }
