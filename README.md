@@ -1,2 +1,3 @@
-# Talk'Bout
-Final project at Hanghae99
+# Talk'Bout 토크부트
+항해99 마지막 실전프로젝트!
+부트캠프를 찾아 헤매는 여러분을 위한 유일무이한 대화의 장💬
