@@ -24,17 +24,9 @@
 - [https://talkbout.camp](https://talkbout.camp)
   
 ## 👾 토크부트 소개
-
 - 실제 부트캠프 수강중인 학생과 수료자에게 듣는 리뷰. 
 - 자신에게 맞는 부트캠프 정보를 한눈에 찾아보세요.
 - 부트캠프에 대한 질문 과 답변도 확인할수있습니다.
-
-
-## 🔍 Target
-- 개발자가 꿈인 대학생 20대 
-- 커리어 전환을 목표로하는 30대
-- 짧은시간동안  집중하여 개발 공부를 하고싶은사람. 
-
 
 ## 📌 개요 
 - 이름: talkbout 토크부트
@@ -45,12 +37,12 @@
   - Designer(UI/UX): 윤영미, 양서문
 
 ## 🔌 개발 환경
-- Server: AWS EC2(Ubuntu 18.06 LTS)
-- Framework: Express(Typescript.js)
+- Server: AWS EC2(Ubuntu 18.04 LTS)
+- Framework: Express(Typescript)
 - ORM : Prisma 
-- Database: Amzon RDS (MySQL)
-- Image Server : AWS S3
-- 
+- Database: Amazon RDS (MySQL)
+- Image Storage : AWS S3
+
 
 ## Architecture 
 ![img](https://github.com/skylermbang/Backend/blob/main/img/architecture.png)
