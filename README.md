@@ -88,5 +88,5 @@ axios, class-validator, passport, multer,  dotenv, helmet, cors, sharp
 ## 프로젝트 초기 기획 노션
 - https://www.notion.so/Talk-Bout-_-_5-90d8e8f4f3904dfb84b3892b94daa7d0
 
-## Front-End(React) 코드 
+## Front-End(React) 깃허브 
 - https://github.com/Talk-Bout/Frontend
