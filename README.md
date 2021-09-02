@@ -20,10 +20,10 @@
 8. [상세 설명 페이지](#상세-설명-페이지)
 -->
 
-## 🔦 웹 사이트
+## 🖥 웹 사이트
 - [https://talkbout.camp](https://talkbout.camp)
   
-## 💡 토크부트 소개
+##👾 토크부트 소개
 
 - 실제 부트캠프 수강중인 학생과 수료자에게 듣는 리뷰. 
 - 자신에게 맞는 부트캠프 정보를 한눈에 찾아보세요.
@@ -50,11 +50,12 @@
 - ORM : Prisma 
 - Database: Amzon RDS (MySQL)
 - Image Server : AWS S3
+- 
 
 ## Architecture 
 ![img](https://github.com/skylermbang/Backend/blob/main/img/architecture.png)
 
-## 🔭 주요 라이브러리
+##📚 주요 라이브러리
 axios, class-validator, passport,  multer,  dotenv, helmet ,cors, sharp
 
 
