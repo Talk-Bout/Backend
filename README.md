@@ -71,6 +71,12 @@ axios, class-validator, passport, multer,  dotenv, helmet, cors, sharp
 - 답변은 한 번 작성시 수정 또는 삭제할 수 없습니다.
 
 
+#### 5. 마이페이지
+- 자신의 닉네임 과 프로필 사진을 수정할수있습니다.
+- 스크랩한 질문 , 자유게시판 글 과 부트캠프를 확인할수있습니다. 
+- 자신이 작성한 글 목록을 확인할수있습니다.
+
+
 ## DB 설계 
 ![image](db imgage )
 
