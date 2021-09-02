@@ -36,7 +36,7 @@
   - Back-end(Node.js): 정창길, 송하영 ,방민수
   - Designer(UI/UX): 윤영미, 양서문
 
-## Architecture 
+## 🛠Architecture 
 ![img](https://github.com/skylermbang/Backend/blob/main/img/architecture.png)
 - REST API: AWS EC2(Ubuntu 18.04 LTS)
 - Framework: Express(TypeScript)
