@@ -70,7 +70,6 @@ axios, class-validator, passport, multer,  dotenv, helmet, cors, sharp
 - 마음에 드는 답변과 질문에 좋아요를 남길 수 있습니다.
 - 답변은 한 번 작성시 수정 또는 삭제할 수 없습니다.
 
-
 #### 5. 마이페이지
 - 자신의 닉네임과 프로필 사진을 수정할 수 있습니다.
 - 북마크한 질문 , 자유 게시판 글과 부트캠프를 확인할 수 있습니다. 
@@ -78,12 +77,13 @@ axios, class-validator, passport, multer,  dotenv, helmet, cors, sharp
 
 
 ## 주요 API
-- API 명세 : https://www.notion.so/09bc5eb473c24d5f9d3b16af489f8e5a?v=b514565b275a4983ad21eddb53331c07 <br>
+- API 명세 : <검토 중>
 
 
 ## 주요 개선 사항
-- Amazon RDS와 S3 이미지 저장소를 서버에서 분리해내 서버 부하를 줄였습니다.  
 - sharp 라이브러리를 사용하여 사진을 압축하여 원본과 함께 저장하였습니다. 사용자에게 더 빠르게 페이지를 보여줄 수 있었습니다.
+- 악성 유저의 글 도배를 방지하는 간단한 알고리즘을 적용했고 개선하는 중입니다.
+- Amazon RDS와 S3 이미지 저장소를 서버에서 분리해내 서버 부하를 줄였습니다.  
 
 ## 프로젝트 초기 기획 노션
 - https://www.notion.so/Talk-Bout-_-_5-90d8e8f4f3904dfb84b3892b94daa7d0
