@@ -77,35 +77,13 @@ axios, class-validator, passport, multer,  dotenv, helmet, cors, sharp
 - 자신이 작성한 글 목록을 확인할 수 있습니다.
 
 
-## DB 설계 
-![image](db imgage )
-
-
 ## 주요 API
-
-- 상세 API : https://www.notion.so/09bc5eb473c24d5f9d3b16af489f8e5a?v=b514565b275a4983ad21eddb53331c07 <br>
-
-
-## 힘들었던 점 및 개선 사항
+- API 명세 : https://www.notion.so/09bc5eb473c24d5f9d3b16af489f8e5a?v=b514565b275a4983ad21eddb53331c07 <br>
 
 
 #### 서버 성능 개선
 - Amazon RDS와 S3 이미지 저장소를 서버에서 분리해내 서버 부하를 줄였습니다.  
 - sharp 라이브러리를 사용하여 사진을 압축하여 원본과 함께 저장하였습니다. 사용자에게 더 빠르게 페이지를 보여줄 수 있었습니다.
-
- 
-#### 보안
-- CORS
-- HTTPS
-- Helmet.js
-
-
-#### Prisma 
-#### 관계형데이터베이스 
-#### 타입 스크립트
-#### 객체지향 프로그래밍 OOP - MVC 패턴
-#### Passport 로그인 구현 
-
 
 ## 프로젝트 초기 기획 노션
 - https://www.notion.so/Talk-Bout-_-_5-90d8e8f4f3904dfb84b3892b94daa7d0
