@@ -81,7 +81,7 @@ axios, class-validator, passport, multer,  dotenv, helmet, cors, sharp
 - API 명세 : https://www.notion.so/09bc5eb473c24d5f9d3b16af489f8e5a?v=b514565b275a4983ad21eddb53331c07 <br>
 
 
-#### 서버 성능 개선
+## 서버 성능 개선
 - Amazon RDS와 S3 이미지 저장소를 서버에서 분리해내 서버 부하를 줄였습니다.  
 - sharp 라이브러리를 사용하여 사진을 압축하여 원본과 함께 저장하였습니다. 사용자에게 더 빠르게 페이지를 보여줄 수 있었습니다.
 
