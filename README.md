@@ -36,18 +36,16 @@
   - Back-end(Node.js): 정창길, 송하영 ,방민수
   - Designer(UI/UX): 윤영미, 양서문
 
-## 🔌 개발 환경
-- Server: AWS EC2(Ubuntu 18.04 LTS)
+## Architecture 
+![img](https://github.com/skylermbang/Backend/blob/main/img/architecture.png)
+- REST API: AWS EC2(Ubuntu 18.04 LTS)
 - Framework: Express(TypeScript)
 - ORM : Prisma 
 - Database: Amazon RDS (MySQL)
 - Image Storage : AWS S3
 
-## Architecture 
-![img](https://github.com/skylermbang/Backend/blob/main/img/architecture.png)
-
 ## 📚 주요 라이브러리
-axios, class-validator, passport,  multer,  dotenv, helmet ,cors, sharp
+axios, class-validator, passport, multer,  dotenv, helmet, cors, sharp
 
 
 ## ✨ 주요 기능
