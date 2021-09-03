@@ -1,10 +1,7 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsNumber,
-} from 'class-validator'
+import { Question } from '@prisma/client'
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator'
 
-export default class updateQuestionValidator {
+export default class UpdateQuestionValidator {
   @IsString()
   @IsNotEmpty()
   title: string
@@ -13,7 +10,6 @@ export default class updateQuestionValidator {
   @IsNotEmpty()
   content: string
 
-  @IsNumber()
-  @IsNotEmpty()
-  questionId: number
+  @IsOptional()
+  image: Question['image']
 }

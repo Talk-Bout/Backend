@@ -1,0 +1,1 @@
+export { default as BootcampInterface } from './Bootcamp.interfaces'

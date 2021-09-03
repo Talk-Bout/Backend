@@ -12,7 +12,8 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({
-  storage: storage
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 } // 파일 사이즈 5MB 제한
 })
 
 export default upload.single('image')

@@ -1,36 +1,33 @@
-import express, { Request, Response, NextFunction } from 'express'
+import { Request, Response, NextFunction, Router } from 'express'
 import Controller from '../../Infrastructures/interfaces/controller.interface'
-import PromiseRejectionException from '../../Infrastructures/exceptions/PromiseRejection.exception'
 import validate from '../../Infrastructures/middlewares/validation.middleware'
-/* validators */
-import createValidator from '../validators/createQuestion.validator'
-import updateValidator from '../validators/updateQuestion.validator'
-import deleteValidator from '../validators/deleteDetail.validator'
-import createAnswerValidator from '../validators/createAnswer.validator'
-import readDetailValidator from '../validators/readDetail.validator'
-import createBookmarkValidator from '../validators/createQuestionBookmark.validator'
-import deleteBookmarkValidator from '../validators/deleteQuestionBookmarks.validator'
-import createLikeValidator from '../validators/createLike.validator'
-import deleteLikeValidator from '../validators/deleteLike.validator'
-/* services */
-import AnswersCreate from '../services/answers.create'
-import AnswersRead from '../services/answers.read'
-import Create from '../services/questions.create'
-import Read from '../services/questions.read'
-import DetailRead from '../services/detail.read'
-import Update from '../services/question.update'
-import Delete from '../services/question.delete'
-import questionBookmarkCreate from '../services/bookmark.create'
-import questionBookmarkDelete from '../services/bookmark.delete'
-import questionLikeCreate from '../services/questionLike.create'
-import questionLikeDelete from '../services/questionLike.delete'
+import prismaException from '../../Infrastructures/utils/prismaException'
+import isProper from '../../Infrastructures/utils/isProper'
+import {
+  CreateQuestionValidator,
+  UpdateQuestionValidator,
+  QuestionJunctionValidator
+} from '../validators'
+import {
+  createQuestion,
+  readQuestion,
+  updateQuestion,
+  deleteQuestion,
+  detailQuestion,
+  popularQuestion,
+  createQuestionLike,
+  deleteQuestionLike,
+  createQuestionBookmark,
+  deleteQuestionBookmark
+} from '../services'
+import authenticate from '../../Infrastructures/middlewares/authentication.middleware'
 
 export default class QuestionsController implements Controller {
-  public readonly path = '/questions'
-  public readonly bookmarkPath = '/questions/:questionId/bookmarks'
-  public readonly likePath = '/questions/:questionId/likes'
-  public readonly answerPath = '/questions/:questionId/answers'
-  public readonly router = express.Router()
+  public readonly router = Router()
+  public readonly path = '/api/questions'
+  public readonly bookmarkPath = '/api/questions/:questionId/questionBookmarks'
+  public readonly likePath = '/api/questions/:questionId/questionLikes'
+  public readonly popularPath = '/api/popular/questions'
 
   constructor() {
     this.initializeRoutes()
@@ -39,173 +36,151 @@ export default class QuestionsController implements Controller {
   private initializeRoutes() {
     this.router
       .route(this.path)
-      .get(this.readQuestions)
-      .post(validate(createValidator), this.createQuestion)
+      .get(this.getQuestion)
+      .post(
+        authenticate(),
+        validate(CreateQuestionValidator),
+        isProper(),
+        this.postQuestion
+      )
 
     this.router
       .route(this.path + '/:questionId')
-      .get(this.readDetail)
-      .patch(validate(updateValidator), this.updateQuestion)
-      .delete(this.deleteQuestion)
-
-    this.router
-      .route(this.answerPath)
-      .post(validate(createAnswerValidator), this.createAnswer)
-      .get(this.readAnswer)
+      .get(this.detailQuestion)
+      .patch(
+        authenticate(),
+        validate(UpdateQuestionValidator),
+        isProper(),
+        this.patchQuestion
+      )
+      .delete(authenticate(), validate(QuestionJunctionValidator), this.deleteQuestion)
 
     this.router
       .route(this.bookmarkPath)
-      .post(validate(createBookmarkValidator), this.createBookmark)
-      .delete(validate(deleteBookmarkValidator),this.deleteBookmark)
+      .post(
+        authenticate(),
+        validate(QuestionJunctionValidator),
+        this.postQuestionBookmark
+      )
+      .delete(
+        authenticate(),
+        validate(QuestionJunctionValidator),
+        this.deleteQuestionBookmark
+      )
 
     this.router
       .route(this.likePath)
-      .post(validate(createLikeValidator),this.createQuestionLike)
-      .delete(validate(deleteLikeValidator),this.deleteQuestionLike)
+      .post(authenticate(), validate(QuestionJunctionValidator), this.postQuestionLike)
+      .delete(
+        authenticate(),
+        validate(QuestionJunctionValidator),
+        this.deleteQuestionLike
+      )
+
+    this.router.route(this.popularPath).get(this.popularQuestion)
   }
 
-  private readQuestions(req: Request, res: Response, next: NextFunction) {
-    return Read()
+  private getQuestion(req: Request, res: Response, next: NextFunction) {
+    const page: number = Number(req.query.page)
+
+    return readQuestion(page)
       .then((questions) => res.status(200).json(questions))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+      .catch((err) => prismaException(err, next))
   }
 
-  private createQuestion(req: Request, res: Response, next: NextFunction) {
-    const createDTO: createValidator = {
+  private postQuestion(req: Request, res: Response, next: NextFunction) {
+    const requestObject: CreateQuestionValidator = {
       title: req.body.title,
       content: req.body.content,
-      nickname: req.body.nickname
+      nickname: String(req.user),
+      image: req.body.image || null
     }
 
-    return Create(createDTO)
-      .then(() => res.status(201).json({ isCreated: true }))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+    return createQuestion(requestObject)
+      .then((question) => res.status(201).json(question))
+      .catch((err) => prismaException(err, next))
   }
 
-  private readDetail(req: Request, res: Response, next: NextFunction) {
-    const readDTO = {
-      questionId: Number(req.params.questionId)
-    }
+  private detailQuestion(req: Request, res: Response, next: NextFunction) {
+    const questionId: number = Number(req.params.questionId)
 
-    return DetailRead(readDTO)
-      .then((questions) => res.status(200).json(questions))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+    return detailQuestion(questionId)
+      .then((question) => res.status(200).json(question))
+      .catch((err) => prismaException(err, next))
   }
 
-  private updateQuestion(req: Request, res: Response, next: NextFunction) {
-    const updateDTO: updateValidator = {
-      questionId: req.body.questionId,
+  private patchQuestion(req: Request, res: Response, next: NextFunction) {
+    const questionId: number = Number(req.params.questionId)
+    const user = String(req.user)
+    const requestObject: UpdateQuestionValidator = {
       title: req.body.title,
-      content: req.body.content
+      content: req.body.content,
+      image: req.body.image || null
     }
 
-    return Update(updateDTO)
-      .then(() => res.status(200).json({ isUpdated: true }))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+    return updateQuestion(questionId, user, requestObject)
+      .then((question) => res.status(200).json(question))
+      .catch((err) => prismaException(err, next))
   }
 
   private deleteQuestion(req: Request, res: Response, next: NextFunction) {
-    const deleteDTO = {
-      questionId: Number(req.params.questionId)
-    }
+    const questionId: number = Number(req.params.questionId)
+    const user = String(req.user)
 
-    return Delete(deleteDTO)
+    return deleteQuestion(questionId, user)
       .then(() => res.status(200).json({ isDeleted: true }))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+      .catch((err) => prismaException(err, next))
   }
 
-  private createBookmark(req: Request, res: Response, next: NextFunction) {
-    const createDTO: createBookmarkValidator = {
-      nickname: req.body.nickname,
+  private popularQuestion(req: Request, res: Response, next: NextFunction) {
+    const page: number = Number(req.query.page)
+
+    return popularQuestion(page)
+      .then((questions) => res.status(200).json(questions))
+      .catch((err) => prismaException(err, next))
+  }
+
+  private postQuestionBookmark(req: Request, res: Response, next: NextFunction) {
+    const requestObject: QuestionJunctionValidator = {
+      nickname: String(req.user),
       questionId: req.body.questionId
     }
 
-    return questionBookmarkCreate(createDTO)
-      .then(() => res.status(201).json({ isCreated: true }))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+    return createQuestionBookmark(requestObject)
+      .then((bookmark) => res.status(201).json(bookmark))
+      .catch((err) => prismaException(err, next))
   }
 
-  private deleteBookmark(req: Request, res: Response, next: NextFunction) {
-    const deleteDTO: deleteBookmarkValidator = {
-      questionBookmarkId: Number(req.params.questionBookmarkId)
+  private deleteQuestionBookmark(req: Request, res: Response, next: NextFunction) {
+    const requestObject: QuestionJunctionValidator = {
+      nickname: String(req.user),
+      questionId: Number(req.params.questionId) // what happens if Id has a string value
     }
 
-    return questionBookmarkDelete(deleteDTO)
+    return deleteQuestionBookmark(requestObject)
       .then(() => res.status(200).json({ isDeleted: true }))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+      .catch((err) => prismaException(err, next))
   }
 
-  private createQuestionLike(req: Request, res: Response, next: NextFunction) {
-    const createDTO: createLikeValidator = {
-      nickname: req.body.nickname,
-      questionId: req.body.questionId,
-      likeId: req.body.likeId
+  private postQuestionLike(req: Request, res: Response, next: NextFunction) {
+    const requestObject: QuestionJunctionValidator = {
+      nickname: String(req.user),
+      questionId: req.body.questionId
     }
 
-    return questionLikeCreate(createDTO)
-      .then(() => res.status(201).json({ isCreated: true }))
-      .catch((err) => {
-        console.error(err)  
-        next(new PromiseRejectionException())
-       })
+    return createQuestionLike(requestObject)
+      .then((like) => res.status(201).json(like))
+      .catch((err) => prismaException(err, next))
   }
 
   private deleteQuestionLike(req: Request, res: Response, next: NextFunction) {
-    const deleteDTO: deleteLikeValidator = {
-      questionId: Number(req.body.questionId),
-      likeId: Number(req.body.likeId)
+    const requestObject: QuestionJunctionValidator = {
+      nickname: String(req.user),
+      questionId: Number(req.params.questionId)
     }
 
-    return questionLikeDelete(deleteDTO)
-      .then(() => res.status(201).json({ isDeletted: true }))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
-  }
-
-  private createAnswer(req: Request, res: Response, next: NextFunction) {
-    const createDTO: createAnswerValidator = {
-      content: req.body.content,
-      nickname: req.body.nickname,
-      questionId: req.body.questionId
-    }
-    console.log(createDTO.questionId)
-    return AnswersCreate(createDTO)
-      .then(() => res.status(201).json({ isCreated: true }))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
-  }
-  // 질문 조회 카운트 추가해라!!!!!!
-  private readAnswer(req: Request, res: Response, next: NextFunction) {
-    return AnswersRead()
-      .then((answers) => res.status(200).json(answers))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+    return deleteQuestionLike(requestObject)
+      .then(() => res.status(201).json({ isDeleted: true }))
+      .catch((err) => prismaException(err, next))
   }
 }

@@ -1,15 +1,10 @@
-import {
-  Length,
-  IsString,
-  IsAlphanumeric,
-  IsNotEmpty,
-  IsOptional
-} from 'class-validator'
+import { Post } from '@prisma/client'
+import { Length, IsString, IsNotEmpty, IsOptional } from 'class-validator'
 
-export default class createPostValidator {
-  @Length(4, 10)
+export default class CreatePostValidator {
+  @Length(4, 20)
+  @IsOptional()
   @IsString()
-  @IsAlphanumeric()
   @IsNotEmpty()
   nickname: string
 
@@ -22,10 +17,9 @@ export default class createPostValidator {
   content: string
 
   @IsString()
-  @IsAlphanumeric()
   @IsNotEmpty()
   category: string
 
   @IsOptional()
-  image: string
+  image: Post['image']
 }

@@ -1,0 +1,1 @@
+export { default as CreateCommunityCommentValidator } from './createComment.validator'

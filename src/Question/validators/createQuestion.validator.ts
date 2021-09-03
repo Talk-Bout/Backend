@@ -1,21 +1,21 @@
-import {
-  Length,
-  IsString,
-  IsNotEmpty,
-} from 'class-validator'
+import { Question } from '@prisma/client'
+import { Length, IsString, IsNotEmpty, IsOptional } from 'class-validator'
 
-export default class createQuestionValidator {
-  @Length(4, 10)
+export default class CreateQuestionValidator {
+  @Length(4, 20)
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
   nickname: string
 
   @IsString()
   @IsNotEmpty()
-  title :string
+  title: string
 
   @IsString()
   @IsNotEmpty()
   content: string
-  
+
+  @IsOptional()
+  image: Question['image']
 }

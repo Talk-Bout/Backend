@@ -1,24 +1,23 @@
 import { NextFunction, Request, Response, Router } from 'express'
-import Controller from '../../Infrastructures/interfaces/controller.interface'
-import validate from '../../Infrastructures/middlewares/validation.middleware'
-import createValidator from '../validators/createUser.validator'
-import readEmailValidator from '../validators/readEmail.validator'
-import NicknameValidator from '../validators/Nickname.validator'
-import readMyPostValidator from '../validators/readMyPost.validator'
-import ValidationFailureException from '../../Infrastructures/exceptions/ValidationFailure.exception'
-import PromiseRejectionException from '../../Infrastructures/exceptions/PromiseRejection.exception'
-import Create from '../services/user.create'
-import readEmail from '../services/email.read'
-import readNickname from '../services/nickname.read'
-import readMyPosts from '../services/myPosts.read'
-import updateUserValidator from '../validators/updateUser.validator'
-import updateUser from '../services/user.update'
-import deleteUser from '../services/user.delete'
-import readMyBookmark from '../services/myBookmark.read'
+import { Controller } from '../../Infrastructures/interfaces'
+import { validate } from '../../Infrastructures/middlewares'
+import { UpdateUserValidator } from '../validators'
+import cors from 'cors'
+import {
+  updateUser,
+  deleteUser,
+  readNickname,
+  readMyPosts,
+  readMyPostBookmarks,
+  readMyBootcampBookmarks,
+  readMyCommunityBookmarks,
+  readMyQuestionBookmarks
+} from '../services'
+import prismaException from '../../Infrastructures/utils/prismaException'
 import authenticate from '../../Infrastructures/middlewares/authentication.middleware'
 
 export default class UsersController implements Controller {
-  public readonly path = '/users'
+  public readonly path = '/api/users'
   public readonly router = Router()
 
   constructor() {
@@ -27,127 +26,134 @@ export default class UsersController implements Controller {
 
   private initializeRoutes() {
     this.router
-      .route(this.path)
-      .post(validate(createValidator), this.createUser)
-
-    this.router.route(this.path + '/email/:email').get(this.readEmailExist)
-
-    this.router
-      .route(this.path + '/nickname/:nickname')
-      .get(this.readNicknameExist)
-
-    this.router
       .route(this.path + '/:nickname')
-      .patch(validate(updateUserValidator), this.updateUser)
-      .delete(this.deleteUser)
+      .get(authenticate(), this.readNickname)
+      .patch(authenticate(), validate(UpdateUserValidator), this.updateUser)
+      .post(authenticate(), this.deleteUser)
+
+    this.router.route(this.path + '/:nickname/posts').get(authenticate(), this.getMyPosts)
 
     this.router
-      .route(this.path + '/:nickname/posts')
-      .get(validate(readMyPostValidator), this.getMyPosts)
+      .route(this.path + '/:nickname/postBookmarks')
+      .get(authenticate(), this.getMyPostBookmarks)
 
-    this.router.route(this.path + '/:nickname/bookmark').get(this.getMyBookmark)
+    this.router
+      .route(this.path + '/:nickname/bootcampBookmarks')
+      .get(authenticate(), this.getMyBootcampBookmarks)
+
+    this.router
+      .route(this.path + '/:nickname/communityBookmarks')
+      .get(authenticate(), this.getMyCommunityBookmarks)
+
+    this.router
+      .route(this.path + '/:nickname/questionBookmarks')
+      .get(authenticate(), this.getMyQuestionBookmarks)
+
+    this.router
+      .route(this.path + '/:nickname/allBookmarks')
+      .get(authenticate(), this.getMyAllBookmarks)
   }
 
-  private createUser(req: Request, res: Response, next: NextFunction) {
-    const createDTO: createValidator = {
-      nickname: req.body.nickname,
-      email: req.body.email,
-      password: req.body.password
-    }
-
-    if (req.body.password != req.body.confirmPassword) {
-      next(new ValidationFailureException())
-    }
-
-    return Create(createDTO)
-      .then(() => res.status(201).json({ isCreated: true }))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
-  }
-
-  private readEmailExist(req: Request, res: Response, next: NextFunction) {
-    const readEmailDTO: readEmailValidator = {
-      email: req.params.email
-    }
-
-    return readEmail(readEmailDTO)
-      .then((exist) => res.status(200).json({ isExist: exist ? true : false }))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
-  }
-
-  private readNicknameExist(req: Request, res: Response, next: NextFunction) {
-    const readNicknameDTO: NicknameValidator = {
-      nickname: req.params.nickname
-    }
-
-    return readNickname(readNicknameDTO)
-      .then((exist) => res.status(200).json({ isExist: exist ? true : false }))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+  private readNickname(req: Request, res: Response, next: NextFunction) {
+    const nickname = { nickname: req.params.nickname }
+    console.log(nickname)
+    return readNickname(nickname)
+      .then(() => res.status(200).json({ isExist: true }))
+      .catch((err) => prismaException(err, next))
   }
 
   private updateUser(req: Request, res: Response, next: NextFunction) {
-    const updateUserDTO: updateUserValidator = {
+    const user = String(req.user)
+    const requestObject: UpdateUserValidator = {
       nickname: req.body.nickname,
-      password: req.body.password,
-      email: req.body.email,
       profilePic: req.body.profilePic || null,
       role: req.body.role || null
     }
 
-    return updateUser(updateUserDTO)
-      .then((result) => res.status(200).json({ isUpdated: true }))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+    return updateUser(user, requestObject)
+      .then(() => res.status(200).json({ isUpdated: true }))
+      .catch((err) => prismaException(err, next))
   }
 
   private deleteUser(req: Request, res: Response, next: NextFunction) {
-    const deleteUserDTO: NicknameValidator = {
-      nickname: req.params.nickname
+    const nickname = {
+      nickname: String(req.user)
+    }
+    const requestObject = {
+      nickname: String(req.user),
+      content: req.body.content
     }
 
-    return deleteUser(deleteUserDTO)
-      .then((result) =>
-        res.status(200).json({ isDeleted: result ? true : false })
-      )
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+    return deleteUser(nickname, requestObject)
+      .then((result) => res.status(200).json({ isDeleted: result ? true : false }))
+      .catch((err) => prismaException(err, next))
   }
 
   private getMyPosts(req: Request, res: Response, next: NextFunction) {
-    const myPostDTO: readMyPostValidator = {
-      nickname: req.params.nickname
+    const nickname = {
+      nickname: String(req.user)
     }
 
-    return readMyPosts(myPostDTO)
+    return readMyPosts(nickname)
       .then((posts) => res.status(200).json(posts))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+      .catch((err) => prismaException(err, next))
   }
 
-  private getMyBookmark(req: Request, res: Response, next: NextFunction) {
-    const myBookmarkDTO: NicknameValidator = {
-      nickname: req.params.nickname
+  private getMyPostBookmarks(req: Request, res: Response, next: NextFunction) {
+    const nickname = {
+      nickname: String(req.user)
     }
 
-    return readMyBookmark(myBookmarkDTO)
+    return readMyPostBookmarks(nickname)
       .then((bookmarks) => res.status(200).json(bookmarks))
-      .catch((err) => {
-        console.error(err)
-        next(new PromiseRejectionException())
-      })
+      .catch((err) => prismaException(err, next))
+  }
+
+  private getMyBootcampBookmarks(req: Request, res: Response, next: NextFunction) {
+    const nickname = {
+      nickname: String(req.user)
+    }
+
+    return readMyBootcampBookmarks(nickname)
+      .then((bookmarks) => res.status(200).json(bookmarks))
+      .catch((err) => prismaException(err, next))
+  }
+
+  private getMyCommunityBookmarks(req: Request, res: Response, next: NextFunction) {
+    const nickname = {
+      nickname: String(req.user)
+    }
+
+    return readMyCommunityBookmarks(nickname)
+      .then((bookmarks) => res.status(200).json(bookmarks))
+      .catch((err) => prismaException(err, next))
+  }
+
+  private getMyQuestionBookmarks(req: Request, res: Response, next: NextFunction) {
+    const nickname = {
+      nickname: String(req.user)
+    }
+
+    return readMyQuestionBookmarks(nickname)
+      .then((bookmarks) => res.status(200).json(bookmarks))
+      .catch((err) => prismaException(err, next))
+  }
+
+  private async getMyAllBookmarks(req: Request, res: Response, next: NextFunction) {
+    const nickname = {
+      nickname: String(req.user)
+    }
+
+    const questionBookmarks = await readMyQuestionBookmarks(nickname).catch((err) =>
+      prismaException(err, next)
+    )
+    const postBookmarks = await readMyPostBookmarks(nickname).catch((err) =>
+      prismaException(err, next)
+    )
+
+    return res.status(200).json({
+      questionBookmarks,
+      postBookmarks
+    })
   }
 }

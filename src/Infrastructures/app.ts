@@ -4,7 +4,10 @@ import cors from 'cors'
 import morgan from 'morgan'
 import errorMiddleware from './middlewares/errorHandler.middleware'
 import log from './utils/log'
+import passportConfig from '../Auth/passports'
+import helmet from 'helmet'
 import 'dotenv/config'
+import pageNotFoundMiddleware from './middlewares/pageNotFound.middleware'
 
 export default class App {
   public app: express.Application
@@ -21,15 +24,21 @@ export default class App {
   }
 
   private initializeMiddlewares() {
+    this.app.use(helmet())
+    this.app.use(
+      cors({
+        credentials: true,
+        origin: ['http://localhost:3000', 'https://talkbout.camp'],
+        methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS']
+      })
+    )
     this.app.use(morgan('dev'))
-    this.app.use(cors({ credentials: true }))
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }))
+    passportConfig()
   }
 
   private initializeControllers(controllers: Array<controller>) {
-    this.app.use('/images', express.static('uploads'))
-
     controllers.forEach((controller) => {
       this.app.use('/', controller.router)
     })
@@ -37,6 +46,7 @@ export default class App {
 
   private initializeErrorHandler() {
     this.app.use(errorMiddleware)
+    this.app.use(pageNotFoundMiddleware())
   }
 
   private listen(port: number) {

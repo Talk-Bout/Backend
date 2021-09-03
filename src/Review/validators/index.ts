@@ -1,0 +1,1 @@
+export { default as CreateReviewValidator } from './createReview.validator'

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, response } from 'express'
+import { Request, Response, NextFunction } from 'express'
 import HttpException from '../exceptions/Http.exception'
 
 export default function errorMiddleware(
@@ -8,10 +8,8 @@ export default function errorMiddleware(
   next: NextFunction
 ) {
   const status = error.status || 500
-  const message = error.message || 'Unknown Error... Happy Coding!'
-  console.log(status, message)
-  res.status(status).send({
-    status,
-    message
-  })
+  const message = error.message || 'Unknown Error...'
+  const meta = error.meta || 'Happy Coding! 😉'
+
+  res.status(status).json({ status: status, message: message, meta: meta })
 }
